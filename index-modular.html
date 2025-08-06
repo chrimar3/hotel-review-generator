@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Professional hotel review generator with modular agent architecture">
+    <meta name="theme-color" content="#2563eb">
+    <title>Hotel Review Generator | Modular Architecture</title>
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-light: #e2e8f0;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--background);
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 24px 16px;
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        /* Debug Panel */
+        .debug-panel {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            display: none;
+        }
+
+        .debug-panel.visible {
+            display: block;
+        }
+
+        .debug-panel h3 {
+            color: #10b981;
+            margin-bottom: 8px;
+        }
+
+        /* Form Sections */
+        .section {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .section h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+        }
+
+        .section p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* Feature Selection */
+        .features-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--background);
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 44px;
+        }
+
+        .feature-item:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .feature-item.selected {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .feature-item input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-light);
+            border-radius: 4px;
+            margin-right: 12px;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .feature-item input[type="checkbox"]:checked {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .feature-item input[type="checkbox"]:checked::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .feature-item label {
+            cursor: pointer;
+            font-size: 16px;
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        /* Form Controls */
+        .staff-select, .comment-textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            background: var(--surface);
+            color: var(--text-dark);
+            min-height: 44px;
+        }
+
+        .comment-textarea {
+            min-height: 80px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .staff-select:focus, .comment-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .char-counter.warning {
+            color: var(--warning-color);
+        }
+
+        .char-counter.error {
+            color: var(--error-color);
+        }
+
+        /* Review Preview */
+        .review-preview {
+            background: var(--background);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            font-size: 16px;
+            line-height: 1.5;
+            min-height: 100px;
+            margin-bottom: 16px;
+        }
+
+        .review-preview.empty {
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* Buttons */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 44px;
+            text-decoration: none;
+            text-align: center;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .button-primary:hover:not(:disabled) {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .button-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .copy-button {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        /* Success/Error Messages */
+        .message {
+            padding: 12px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 16px;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .message.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .message-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .message-error {
+            background: var(--error-color);
+            color: white;
+        }
+
+        /* Platform Selection */
+        .platform-buttons {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .platform-primary {
+            background: var(--primary-color);
+            color: white;
+            padding: 16px;
+            font-size: 18px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .platform-secondary {
+            background: var(--surface);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        /* Loading States */
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 20px 12px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        *:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        .feature-item:focus-within {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Debug Panel -->
+    <div class="debug-panel" id="debugPanel">
+        <h3>🤖 Agent Status</h3>
+        <div id="debugContent">Initializing agents...</div>
+    </div>
+
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-placeholder" id="hotelLogo">🏨</div>
+            <h1>Share Your Experience</h1>
+            <p>Help others discover what makes <span id="hotelName">our hotel</span> special</p>
+            <small style="color: var(--text-light); font-size: 12px;">Powered by Modular Agent Architecture</small>
+        </header>
+
+        <main>
+            <!-- Feature Selection -->
+            <section class="section">
+                <h2>What did you enjoy most?</h2>
+                <p>Select all that apply to help create your personalized review</p>
+                <div class="features-grid" id="featuresGrid">
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="service" value="excellent customer service">
+                        <label for="service">Excellent customer service</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="rooms" value="clean and comfortable rooms">
+                        <label for="rooms">Clean and comfortable rooms</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="location" value="great location and accessibility">
+                        <label for="location">Great location and accessibility</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="dining" value="outstanding dining experience">
+                        <label for="dining">Outstanding dining experience</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="facilities" value="beautiful facilities and amenities">
+                        <label for="facilities">Beautiful facilities and amenities</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="value" value="exceptional value for money">
+                        <label for="value">Exceptional value for money</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Staff Recognition -->
+            <section class="section">
+                <h2>Staff Recognition</h2>
+                <p>Any staff member who made your stay special?</p>
+                <select class="staff-select" id="staffSelect" aria-label="Select a staff member to recognize">
+                    <option value="">Prefer not to mention</option>
+                    <option value="Sarah">Sarah</option>
+                    <option value="Michael">Michael</option>
+                    <option value="Emma">Emma</option>
+                    <option value="David">David</option>
+                    <option value="Lisa">Lisa</option>
+                    <option value="James">James</option>
+                    <option value="Maria">Maria</option>
+                    <option value="Alex">Alex</option>
+                </select>
+            </section>
+
+            <!-- Personal Comments -->
+            <section class="section">
+                <h2>Personal Touch</h2>
+                <p>Add your own thoughts (optional)</p>
+                <textarea 
+                    class="comment-textarea" 
+                    id="personalComments"
+                    placeholder="Share any specific details about your experience..."
+                    maxlength="200"
+                    aria-describedby="charCounter"
+                ></textarea>
+                <div class="char-counter" id="charCounter">0/200 characters</div>
+            </section>
+
+            <!-- Generated Review Preview -->
+            <section class="section">
+                <h2>Your Review Preview</h2>
+                <div class="review-preview empty" id="reviewPreview">
+                    Select features above to generate your personalized review
+                </div>
+                
+                <!-- Messages -->
+                <div class="message message-success" id="successMessage">
+                    ✓ Review copied to clipboard! You can now paste it on the review platform.
+                </div>
+                <div class="message message-error" id="errorMessage">
+                    ❌ Something went wrong. Please try again.
+                </div>
+                
+                <button class="button button-primary copy-button" id="copyButton" disabled>
+                    📋 Copy Review to Clipboard
+                </button>
+            </section>
+
+            <!-- Platform Selection -->
+            <section class="section">
+                <h2>Where would you like to leave your review?</h2>
+                <div class="platform-buttons" id="platformButtons">
+                    <!-- Dynamically populated by PlatformRoutingAgent -->
+                </div>
+                <p style="font-size: 14px; color: var(--text-light); text-align: center; margin-top: 16px;">
+                    Tip: Copy your review first, then click the platform button to open the review page
+                </p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Load Agent Dependencies -->
+    <script src="src/agents/ReviewGeneratorAgent.js"></script>
+    <script src="src/agents/PlatformRoutingAgent.js"></script>
+    <script src="src/agents/UIControllerAgent.js"></script>
+    <script src="src/agents/StateManagementAgent.js"></script>
+    <script src="src/HotelReviewApp.js"></script>
+
+    <script>
+        // Application instance
+        let app;
+        
+        // Debug utilities
+        const Debug = {
+            enabled: window.location.search.includes('debug=true'),
+            
+            log(message, data = {}) {
+                if (this.enabled) {
+                    console.log(`[HotelReviewApp] ${message}`, data);
+                    this.updatePanel(message, data);
+                }
+            },
+            
+            updatePanel(message, data) {
+                const panel = document.getElementById('debugPanel');
+                const content = document.getElementById('debugContent');
+                
+                if (panel && content) {
+                    panel.classList.add('visible');
+                    
+                    const timestamp = new Date().toLocaleTimeString();
+                    const entry = `[${timestamp}] ${message}`;
+                    
+                    // Keep last 5 entries
+                    const lines = content.textContent.split('\n').slice(-4);
+                    lines.push(entry);
+                    content.textContent = lines.join('\n');
+                }
+            }
+        };
+        
+        // Initialize application
+        async function initializeApplication() {
+            Debug.log('Starting application initialization');
+            
+            try {
+                // Get URL parameters for configuration
+                const urlParams = new URLSearchParams(window.location.search);
+                const hotelName = urlParams.get('hotel') || 'our hotel';
+                const source = urlParams.get('source') || 'direct';
+                
+                // Create application instance
+                app = new HotelReviewApp({
+                    hotelName: decodeURIComponent(hotelName.replace(/[-_]/g, ' ')),
+                    debug: Debug.enabled,
+                    enableAnalytics: false
+                });
+                
+                Debug.log('HotelReviewApp instance created', { hotelName, source });
+                
+                // Initialize the application
+                const result = await app.initialize();
+                
+                if (result.success) {
+                    Debug.log('Application initialized successfully');
+                    
+                    // Setup additional UI interactions not handled by agents
+                    setupUIInteractions();
+                    
+                    // Update hotel name in UI
+                    const hotelNameElements = document.querySelectorAll('#hotelName');
+                    hotelNameElements.forEach(el => {
+                        el.textContent = app.config.hotelName;
+                    });
+                    
+                    console.log('🎉 Hotel Review Generator ready!', {
+                        hotelName: app.config.hotelName,
+                        source,
+                        debug: Debug.enabled
+                    });
+                    
+                } else {
+                    throw new Error(result.error || 'Application initialization failed');
+                }
+                
+            } catch (error) {
+                console.error('Failed to initialize application:', error);
+                Debug.log('Initialization failed', { error: error.message });
+                showFallbackUI(error);
+            }
+        }
+        
+        // Setup UI interactions that work directly with the app
+        function setupUIInteractions() {
+            Debug.log('Setting up UI interactions');
+            
+            // Character counter for comments
+            const personalComments = document.getElementById('personalComments');
+            const charCounter = document.getElementById('charCounter');
+            
+            if (personalComments && charCounter) {
+                personalComments.addEventListener('input', () => {
+                    const length = personalComments.value.length;
+                    const maxLength = 200;
+                    
+                    charCounter.textContent = `${length}/${maxLength} characters`;
+                    
+                    charCounter.classList.toggle('warning', length > maxLength * 0.9);
+                    charCounter.classList.toggle('error', length >= maxLength);
+                });
+            }
+            
+            // Feature item visual feedback
+            const featuresGrid = document.getElementById('featuresGrid');
+            if (featuresGrid) {
+                featuresGrid.addEventListener('change', (e) => {
+                    if (e.target.type === 'checkbox') {
+                        const featureItem = e.target.closest('.feature-item');
+                        if (featureItem) {
+                            featureItem.classList.toggle('selected', e.target.checked);
+                        }
+                    }
+                });
+                
+                // Keyboard support for feature items
+                featuresGrid.addEventListener('keydown', (e) => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                        const featureItem = e.target.closest('.feature-item');
+                        if (featureItem) {
+                            const checkbox = featureItem.querySelector('input[type="checkbox"]');
+                            if (checkbox) {
+                                e.preventDefault();
+                                checkbox.checked = !checkbox.checked;
+                                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Show fallback UI if initialization fails
+        function showFallbackUI(error) {
+            const container = document.querySelector('.container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="section" style="text-align: center; padding: 40px;">
+                        <h2 style="color: var(--error-color); margin-bottom: 16px;">⚠️ Application Error</h2>
+                        <p style="margin-bottom: 20px;">Sorry, the application failed to initialize properly.</p>
+                        <p style="font-size: 14px; color: var(--text-light); margin-bottom: 20px;">
+                            Error: ${error.message}
+                        </p>
+                        <button class="button button-primary" onclick="location.reload()">
+                            🔄 Reload Page
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Show messages with animations
+        function showMessage(type, text, duration = 3000) {
+            const messageElement = document.getElementById(type + 'Message');
+            if (messageElement) {
+                messageElement.textContent = text;
+                messageElement.classList.add('show');
+                
+                setTimeout(() => {
+                    messageElement.classList.remove('show');
+                }, duration);
+            }
+        }
+        
+        // Global error handler
+        window.addEventListener('error', (event) => {
+            Debug.log('Global error caught', { 
+                message: event.message, 
+                filename: event.filename, 
+                line: event.lineno 
+            });
+        });
+        
+        // Start the application when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApplication);
+        } else {
+            initializeApplication();
+        }
+        
+        // Handle visibility change to update when user returns
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && app && app.initialized) {
+                Debug.log('Page became visible, triggering refresh');
+                // Could trigger agent refresh here if needed
+            }
+        });
+        
+        // Prevent zoom on input focus (iOS)
+        document.addEventListener('touchstart', () => {}, { passive: true });
+    </script>
+</body>
+</html>

@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Help hotel guests create and submit reviews across multiple platforms">
+    <meta name="theme-color" content="#2563eb">
+    <title>Share Your Experience | Hotel Review Generator</title>
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-light: #e2e8f0;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--background);
+            min-height: 100vh;
+            padding-bottom: 100px; /* Space for sticky buttons */
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 24px 16px;
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        /* Form Sections */
+        .section {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .section h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+        }
+
+        .section p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* Feature Selection */
+        .features-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--background);
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 44px;
+        }
+
+        .feature-item:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .feature-item.selected {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .feature-item input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-light);
+            border-radius: 4px;
+            margin-right: 12px;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .feature-item input[type="checkbox"]:checked {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .feature-item input[type="checkbox"]:checked::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .feature-item label {
+            cursor: pointer;
+            font-size: 16px;
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        /* Staff Recognition */
+        .staff-select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            background: var(--surface);
+            color: var(--text-dark);
+            min-height: 44px;
+        }
+
+        .staff-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Personal Comments */
+        .comment-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            background: var(--surface);
+            color: var(--text-dark);
+            resize: vertical;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .char-counter.warning {
+            color: var(--warning-color);
+        }
+
+        .char-counter.error {
+            color: var(--error-color);
+        }
+
+        /* Generated Review */
+        .review-preview {
+            background: var(--background);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            font-size: 16px;
+            line-height: 1.5;
+            min-height: 100px;
+            margin-bottom: 16px;
+        }
+
+        .review-preview.empty {
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* Buttons */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 44px;
+            text-decoration: none;
+            text-align: center;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .button-secondary {
+            background: var(--surface);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+        }
+
+        .button-secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .button-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .copy-button {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        /* Success Feedback */
+        .success-message {
+            background: var(--success-color);
+            color: white;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 16px;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .success-message.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Platform Selection */
+        .platform-buttons {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .platform-primary {
+            background: var(--primary-color);
+            color: white;
+            padding: 16px;
+            font-size: 18px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .platform-secondary {
+            background: var(--surface);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        /* Sticky Bottom Actions */
+        .sticky-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border-light);
+            padding: 16px;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .sticky-actions .container {
+            padding: 0 16px;
+        }
+
+        /* Loading States */
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 20px 12px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus States */
+        *:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        .feature-item:focus-within {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-placeholder" id="hotelLogo">🏨</div>
+            <h1>Share Your Experience</h1>
+            <p>Help others discover what makes <span id="hotelName">our hotel</span> special by sharing your review</p>
+        </header>
+
+        <main>
+            <!-- Feature Selection -->
+            <section class="section">
+                <h2>What did you enjoy most?</h2>
+                <p>Select all that apply to help create your personalized review</p>
+                <div class="features-grid" id="featuresGrid">
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="service" value="excellent customer service">
+                        <label for="service">Excellent customer service</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="rooms" value="clean and comfortable rooms">
+                        <label for="rooms">Clean and comfortable rooms</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="location" value="great location and accessibility">
+                        <label for="location">Great location and accessibility</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="dining" value="outstanding dining experience">
+                        <label for="dining">Outstanding dining experience</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="facilities" value="beautiful facilities and amenities">
+                        <label for="facilities">Beautiful facilities and amenities</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="value" value="exceptional value for money">
+                        <label for="value">Exceptional value for money</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Staff Recognition -->
+            <section class="section">
+                <h2>Staff Recognition</h2>
+                <p>Any staff member who made your stay special?</p>
+                <select class="staff-select" id="staffSelect" aria-label="Select a staff member to recognize">
+                    <option value="">Prefer not to mention</option>
+                    <option value="Sarah">Sarah</option>
+                    <option value="Michael">Michael</option>
+                    <option value="Emma">Emma</option>
+                    <option value="David">David</option>
+                    <option value="Lisa">Lisa</option>
+                    <option value="James">James</option>
+                    <option value="Maria">Maria</option>
+                    <option value="Alex">Alex</option>
+                </select>
+            </section>
+
+            <!-- Personal Comments -->
+            <section class="section">
+                <h2>Personal Touch</h2>
+                <p>Add your own thoughts (optional)</p>
+                <textarea 
+                    class="comment-textarea" 
+                    id="personalComments"
+                    placeholder="Share any specific details about your experience..."
+                    maxlength="200"
+                    aria-describedby="charCounter"
+                ></textarea>
+                <div class="char-counter" id="charCounter">0/200 characters</div>
+            </section>
+
+            <!-- Generated Review Preview -->
+            <section class="section">
+                <h2>Your Review Preview</h2>
+                <div class="review-preview empty" id="reviewPreview">
+                    Select features above to generate your personalized review
+                </div>
+                <div class="success-message" id="successMessage">
+                    ✓ Review copied to clipboard! You can now paste it on the review platform.
+                </div>
+                <button class="button button-primary copy-button" id="copyButton" disabled>
+                    📋 Copy Review to Clipboard
+                </button>
+            </section>
+
+            <!-- Platform Selection -->
+            <section class="section">
+                <h2>Where would you like to leave your review?</h2>
+                <div class="platform-buttons" id="platformButtons">
+                    <!-- Dynamically populated based on source parameter -->
+                </div>
+                <p style="font-size: 14px; color: var(--text-light); text-align: center; margin-top: 16px;">
+                    Tip: Copy your review first, then click the platform button to open the review page
+                </p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Sticky Bottom Actions (shown only when review is ready) -->
+    <div class="sticky-actions" id="stickyActions" style="display: none;">
+        <div class="container">
+            <button class="button button-success copy-button" id="stickyCopyButton">
+                📋 Copy & Leave Review
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration and State
+        const config = {
+            hotelName: 'our hotel',
+            staffMembers: ['Sarah', 'Michael', 'Emma', 'David', 'Lisa', 'James', 'Maria', 'Alex'],
+            maxCommentLength: 200,
+            platforms: {
+                booking: {
+                    name: 'Booking.com',
+                    url: 'https://www.booking.com/reviewcenter.html',
+                    primary: true
+                },
+                expedia: {
+                    name: 'Expedia',
+                    url: 'https://www.expedia.com/traveler/review/',
+                    primary: true
+                },
+                tripadvisor: {
+                    name: 'TripAdvisor',
+                    url: 'https://www.tripadvisor.com/UserReview',
+                    primary: false
+                },
+                google: {
+                    name: 'Google Maps',
+                    url: 'https://search.google.com/local/writereview',
+                    primary: false
+                }
+            }
+        };
+
+        let state = {
+            selectedFeatures: [],
+            selectedStaff: '',
+            personalComments: '',
+            generatedReview: '',
+            source: 'direct',
+            hotelName: config.hotelName
+        };
+
+        // DOM Elements
+        const elements = {
+            hotelLogo: document.getElementById('hotelLogo'),
+            hotelName: document.getElementById('hotelName'),
+            featuresGrid: document.getElementById('featuresGrid'),
+            staffSelect: document.getElementById('staffSelect'),
+            personalComments: document.getElementById('personalComments'),
+            charCounter: document.getElementById('charCounter'),
+            reviewPreview: document.getElementById('reviewPreview'),
+            copyButton: document.getElementById('copyButton'),
+            stickyCopyButton: document.getElementById('stickyCopyButton'),
+            successMessage: document.getElementById('successMessage'),
+            stickyActions: document.getElementById('stickyActions'),
+            platformButtons: document.getElementById('platformButtons')
+        };
+
+        // Utility Functions
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Review Generation
+        function generateReview() {
+            if (state.selectedFeatures.length === 0 && !state.personalComments.trim()) {
+                return '';
+            }
+
+            let review = `I had a wonderful stay at ${state.hotelName}.`;
+
+            // Add selected features
+            if (state.selectedFeatures.length > 0) {
+                const features = [...state.selectedFeatures];
+                
+                if (features.length === 1) {
+                    review += ` The ${features[0]} was exceptional.`;
+                } else if (features.length === 2) {
+                    review += ` The ${features[0]} and ${features[1]} were outstanding.`;
+                } else {
+                    const lastFeature = features.pop();
+                    review += ` The ${features.join(', ')} were all excellent, and the ${lastFeature} was particularly impressive.`;
+                }
+            }
+
+            // Add staff recognition
+            if (state.selectedStaff) {
+                const recognitionPhrases = [
+                    `Special thanks to ${state.selectedStaff} for exceptional service.`,
+                    `${state.selectedStaff} went above and beyond to make our stay memorable.`,
+                    `We were particularly impressed by ${state.selectedStaff}'s professionalism and helpfulness.`,
+                    `${state.selectedStaff} provided outstanding customer service throughout our stay.`
+                ];
+                review += ` ${recognitionPhrases[Math.floor(Math.random() * recognitionPhrases.length)]}`;
+            }
+
+            // Add personal comments
+            if (state.personalComments.trim()) {
+                review += ` ${state.personalComments.trim()}`;
+            }
+
+            // Add closing
+            const closingPhrases = [
+                'Highly recommend!',
+                'Will definitely return!',
+                'Exceeded expectations!',
+                'Five stars!',
+                'Outstanding experience overall!',
+                'Perfect for our stay!'
+            ];
+            review += ` ${closingPhrases[Math.floor(Math.random() * closingPhrases.length)]}`;
+
+            return review;
+        }
+
+        // UI Updates
+        function updateReviewPreview() {
+            const review = generateReview();
+            state.generatedReview = review;
+            
+            if (review) {
+                elements.reviewPreview.textContent = review;
+                elements.reviewPreview.classList.remove('empty');
+                elements.copyButton.disabled = false;
+                elements.stickyCopyButton.disabled = false;
+                elements.stickyActions.style.display = 'block';
+            } else {
+                elements.reviewPreview.textContent = 'Select features above to generate your personalized review';
+                elements.reviewPreview.classList.add('empty');
+                elements.copyButton.disabled = true;
+                elements.stickyCopyButton.disabled = true;
+                elements.stickyActions.style.display = 'none';
+            }
+        }
+
+        function updateCharCounter() {
+            const length = state.personalComments.length;
+            elements.charCounter.textContent = `${length}/${config.maxCommentLength} characters`;
+            
+            if (length > config.maxCommentLength * 0.9) {
+                elements.charCounter.classList.add('warning');
+            } else {
+                elements.charCounter.classList.remove('warning');
+            }
+            
+            if (length >= config.maxCommentLength) {
+                elements.charCounter.classList.add('error');
+            } else {
+                elements.charCounter.classList.remove('error');
+            }
+        }
+
+        function showSuccessMessage() {
+            elements.successMessage.classList.add('show');
+            setTimeout(() => {
+                elements.successMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // Clipboard Operations
+        async function copyToClipboard() {
+            if (!state.generatedReview) return false;
+
+            try {
+                await navigator.clipboard.writeText(state.generatedReview);
+                return true;
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = state.generatedReview;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    return true;
+                } catch (err) {
+                    document.body.removeChild(textArea);
+                    return false;
+                }
+            }
+        }
+
+        // Platform Detection and Setup
+        function detectPlatform() {
+            const source = getUrlParameter('source') || 'direct';
+            const hotel = getUrlParameter('hotel');
+            
+            state.source = source;
+            
+            if (hotel) {
+                state.hotelName = decodeURIComponent(hotel.replace(/[-_]/g, ' '));
+                config.hotelName = state.hotelName;
+                elements.hotelName.textContent = state.hotelName;
+            }
+
+            setupPlatformButtons();
+        }
+
+        function setupPlatformButtons() {
+            const platformConfig = {
+                direct: {
+                    primary: ['tripadvisor'],
+                    secondary: ['google']
+                },
+                booking: {
+                    primary: ['booking'],
+                    secondary: ['tripadvisor', 'google']
+                },
+                expedia: {
+                    primary: ['expedia'],
+                    secondary: ['tripadvisor', 'google']
+                }
+            };
+
+            const setup = platformConfig[state.source] || platformConfig.direct;
+            elements.platformButtons.innerHTML = '';
+
+            // Add primary platform button
+            setup.primary.forEach(platformKey => {
+                const platform = config.platforms[platformKey];
+                if (platform) {
+                    const button = document.createElement('a');
+                    button.href = platform.url;
+                    button.target = '_blank';
+                    button.rel = 'noopener noreferrer';
+                    button.className = 'button platform-primary';
+                    button.textContent = `Leave Review on ${platform.name}`;
+                    button.setAttribute('aria-label', `Open ${platform.name} to leave a review`);
+                    elements.platformButtons.appendChild(button);
+                }
+            });
+
+            // Add secondary platform buttons
+            setup.secondary.forEach(platformKey => {
+                const platform = config.platforms[platformKey];
+                if (platform) {
+                    const button = document.createElement('a');
+                    button.href = platform.url;
+                    button.target = '_blank';
+                    button.rel = 'noopener noreferrer';
+                    button.className = 'button platform-secondary';
+                    button.textContent = `Also review on ${platform.name}`;
+                    button.setAttribute('aria-label', `Open ${platform.name} to leave a review`);
+                    elements.platformButtons.appendChild(button);
+                }
+            });
+        }
+
+        // Event Handlers
+        function handleFeatureChange(checkbox) {
+            const value = checkbox.value;
+            const isChecked = checkbox.checked;
+
+            if (isChecked) {
+                if (!state.selectedFeatures.includes(value)) {
+                    state.selectedFeatures.push(value);
+                }
+                checkbox.parentElement.classList.add('selected');
+            } else {
+                state.selectedFeatures = state.selectedFeatures.filter(f => f !== value);
+                checkbox.parentElement.classList.remove('selected');
+            }
+
+            updateReviewPreview();
+        }
+
+        function handleStaffChange() {
+            state.selectedStaff = elements.staffSelect.value;
+            updateReviewPreview();
+        }
+
+        function handleCommentsChange() {
+            state.personalComments = elements.personalComments.value;
+            updateCharCounter();
+            updateReviewPreview();
+        }
+
+        async function handleCopyClick() {
+            const button = event.target;
+            const originalText = button.textContent;
+            
+            button.classList.add('loading');
+            button.textContent = 'Copying...';
+            
+            const success = await copyToClipboard();
+            
+            button.classList.remove('loading');
+            
+            if (success) {
+                button.textContent = '✓ Copied!';
+                button.classList.add('button-success');
+                showSuccessMessage();
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('button-success');
+                }, 2000);
+            } else {
+                button.textContent = '❌ Copy failed';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            }
+        }
+
+        // Keyboard Navigation
+        function handleFeatureKeyPress(event, checkbox) {
+            if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault();
+                checkbox.checked = !checkbox.checked;
+                handleFeatureChange(checkbox);
+            }
+        }
+
+        // Initialize Application
+        function initializeApp() {
+            // Detect platform and setup
+            detectPlatform();
+
+            // Feature selection event listeners
+            elements.featuresGrid.addEventListener('click', (e) => {
+                const featureItem = e.target.closest('.feature-item');
+                if (featureItem) {
+                    const checkbox = featureItem.querySelector('input[type="checkbox"]');
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    handleFeatureChange(checkbox);
+                }
+            });
+
+            elements.featuresGrid.addEventListener('keydown', (e) => {
+                const featureItem = e.target.closest('.feature-item');
+                if (featureItem) {
+                    const checkbox = featureItem.querySelector('input[type="checkbox"]');
+                    handleFeatureKeyPress(e, checkbox);
+                }
+            });
+
+            // Staff selection
+            elements.staffSelect.addEventListener('change', handleStaffChange);
+
+            // Personal comments
+            elements.personalComments.addEventListener('input', handleCommentsChange);
+
+            // Copy buttons
+            elements.copyButton.addEventListener('click', handleCopyClick);
+            elements.stickyCopyButton.addEventListener('click', handleCopyClick);
+
+            // Initialize character counter
+            updateCharCounter();
+            
+            // Initial review update
+            updateReviewPreview();
+
+            console.log('Hotel Review Generator initialized successfully');
+        }
+
+        // Start the application when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+
+        // Handle visibility change to update review when user returns
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                updateReviewPreview();
+            }
+        });
+
+        // Prevent zoom on input focus (iOS)
+        document.addEventListener('touchstart', () => {}, { passive: true });
+    </script>
+</body>
+</html>
