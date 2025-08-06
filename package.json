@@ -1,7 +1,7 @@
 {
-  "name": "hotel-review-generator",
-  "version": "1.0.0",
-  "description": "Professional hotel review generator with modular agent architecture",
+  "name": "hotel-guest-communication-system",
+  "version": "2.0.0",
+  "description": "Professional hotel guest communication management system for authentic feedback collection and service improvement",
   "main": "index.html",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
@@ -24,24 +24,28 @@
   },
   "keywords": [
     "hotel",
-    "review",
-    "generator",
+    "guest-feedback",
+    "communication",
+    "hospitality",
+    "crm",
+    "pms",
     "mobile",
     "pwa",
     "javascript",
-    "agents",
+    "gdpr-compliant",
+    "analytics",
     "modular"
   ],
-  "author": "Hotel Review Generator Team",
+  "author": "Hotel Communication Systems Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/username/hotel-review-generator.git"
+    "url": "https://github.com/yourorg/hotel-communication-system.git"
   },
   "bugs": {
-    "url": "https://github.com/username/hotel-review-generator/issues"
+    "url": "https://github.com/yourorg/hotel-communication-system/issues"
   },
-  "homepage": "https://github.com/username/hotel-review-generator#readme",
+  "homepage": "https://github.com/yourorg/hotel-communication-system#readme",
   "devDependencies": {
     "vite": "^5.0.0",
     "@vitejs/plugin-legacy": "^5.0.0",

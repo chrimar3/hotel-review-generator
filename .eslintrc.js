@@ -17,10 +17,7 @@ module.exports = {
   globals: {
     // Global variables for our application
     'HotelReviewApp': 'readonly',
-    'ReviewGeneratorAgent': 'readonly',
-    'PlatformRoutingAgent': 'readonly', 
-    'UIControllerAgent': 'readonly',
-    'StateManagementAgent': 'readonly',
+    'AppCore': 'readonly',
     'SimpleLogger': 'readonly',
     // Build-time constants
     '__APP_VERSION__': 'readonly',

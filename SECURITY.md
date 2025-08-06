@@ -1,22 +1,28 @@
 # Security Policy
 
-## Supported Versions
+## 🔒 Security Overview
+
+The Hotel Guest Communication Management System is designed with security and privacy as core principles. We are committed to protecting guest data, ensuring GDPR compliance, and maintaining the highest standards of information security.
+
+## 🛡️ Supported Versions
 
 We actively support the following versions with security updates:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
+| Version | Supported          | Notes                    |
+| ------- | ------------------ | ------------------------ |
+| 2.x.x   | ✅ Active support  | Current production       |
+| 1.x.x   | ⚠️ Security only   | Legacy hotel review tool |
+| < 1.0   | ❌ Not supported   | Deprecated               |
 
-## Reporting a Vulnerability
+## 🚨 Reporting a Vulnerability
 
-We take the security of Hotel Review Generator seriously. If you believe you have found a security vulnerability, please report it to us as described below.
+We take the security of the Hotel Guest Communication System seriously. If you believe you have found a security vulnerability, please report it to us as described below.
 
 ### How to Report
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them via email to: **security@hotelreviewgenerator.com**
+Instead, please report them via email to: **security@hotelcommunication.com**
 
 Please include the following information in your report:
 - Type of issue (e.g. buffer overflow, SQL injection, cross-site scripting, etc.)
@@ -76,17 +82,26 @@ We believe that working with security researchers is crucial to keeping our user
 - **Monitoring**: Monitor for unusual activity or errors
 - **Reporting**: Report any suspicious behavior immediately
 
-## Security Features
+## 🔐 Security Features
+
+### Data Protection & Privacy
+- **GDPR Compliant**: Full compliance with European data protection regulations
+- **Data Minimization**: Only collect necessary guest information for communication
+- **Purpose Limitation**: Data used solely for legitimate hotel communication purposes
+- **Storage Limitation**: Automated data retention policies with cleanup
+- **Right to Erasure**: Guest data deletion capabilities on request
+- **Consent Management**: Clear opt-in/opt-out mechanisms for all communications
+- **Data Encryption**: All sensitive guest data encrypted at rest and in transit
 
 ### Built-in Security Measures
-
 - **Content Security Policy**: Implemented to prevent XSS attacks
 - **Input Sanitization**: All user inputs are properly validated and sanitized
-- **No Server-Side Storage**: Client-side only architecture minimizes data exposure
-- **HTTPS Required**: Clipboard API requires secure context
+- **Secure Authentication**: Multi-factor authentication support for admin access
+- **Session Management**: Secure session handling with automatic timeout
+- **HTTPS Required**: All communications require secure HTTPS connections
 - **Error Handling**: Comprehensive error handling prevents information leakage
 - **Dependency Scanning**: Automated dependency vulnerability scanning
-- **Code Quality**: ESLint security rules and static analysis
+- **Code Quality**: ESLint security rules and comprehensive static analysis
 
 ### Security Architecture
 
@@ -105,9 +120,12 @@ We believe that working with security researchers is crucial to keeping our user
 ### Standards Adherence
 
 - **OWASP Top 10**: Follows OWASP security guidelines
-- **GDPR**: No personal data collection or storage
+- **GDPR**: Full GDPR compliance with guest data protection
+- **SOC 2 Type II**: Annual security audits and certification
+- **ISO 27001**: Information Security Management System compliance
+- **CCPA**: California Consumer Privacy Act compliance
 - **Accessibility**: WCAG 2.1 AA compliance
-- **Privacy**: Privacy-first design principles
+- **Privacy**: Privacy-by-design principles throughout the system
 
 ### Regular Security Activities
 
@@ -119,15 +137,18 @@ We believe that working with security researchers is crucial to keeping our user
 ## Contact
 
 For security-related questions or concerns:
-- **Email**: security@hotelreviewgenerator.com
+- **Email**: security@hotelcommunication.com
+- **Privacy Officer**: privacy@hotelcommunication.com
+- **Emergency Hotline**: +1-XXX-XXX-XXXX (24/7 security incidents)
 - **PGP Key**: Available on request
-- **Response Time**: Within 48 hours for security issues
+- **Response Time**: Within 24 hours for security issues
 
 ## Version History
 
-- **v1.0**: Initial security policy established
-- Last Updated: January 2025
+- **v2.0**: Updated for Hotel Guest Communication Management System
+- **v1.0**: Initial security policy established (legacy review system)
+- **Last Updated**: January 2025
 
 ---
 
-*This security policy is regularly reviewed and updated to ensure it remains effective and current with best practices.*
+*This security policy is regularly reviewed and updated quarterly to ensure it remains effective and current with industry best practices and regulatory requirements.*

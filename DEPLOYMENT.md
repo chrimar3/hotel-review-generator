@@ -1,6 +1,6 @@
-# 🚀 Hotel Review Generator - Deployment Guide
+# 🚀 Hotel Guest Communication Management System - Deployment Guide
 
-Complete deployment guide for the Hotel Review Generator with multiple deployment options and production-ready configurations.
+Complete deployment guide for the Hotel Guest Communication Management System with multiple deployment options and production-ready configurations for authentic guest feedback collection and service improvement.
 
 ## 📋 Quick Start
 
@@ -73,9 +73,9 @@ docker-compose up nginx app-prod
 ```
 
 **Images**:
-- `hotel-review-generator:dev` - Development with hot reload
-- `hotel-review-generator:prod` - Production with nginx
-- `hotel-review-generator:test` - Testing environment
+- `hotel-guest-communication:dev` - Development with hot reload
+- `hotel-guest-communication:prod` - Production with nginx
+- `hotel-guest-communication:test` - Testing environment
 
 ### 4. Static File Server
 **Best for**: Simple hosting or CDN deployment
@@ -99,9 +99,14 @@ export NODE_ENV=production
 export NETLIFY_SITE_ID=your_site_id
 export NETLIFY_AUTH_TOKEN=your_auth_token
 
-# Optional integrations
-export SLACK_WEBHOOK_URL=your_webhook_url
+# Optional integrations for guest feedback
+export GUEST_FEEDBACK_API=your_feedback_api
+export EMAIL_SERVICE_API=your_email_service_api
 export SENTRY_DSN=your_sentry_dsn
+
+# GDPR Compliance
+export DATA_RETENTION_DAYS=90
+export GDPR_COMPLIANCE_MODE=true
 ```
 
 ### Configuration Files
@@ -234,8 +239,8 @@ All deployments automatically redirect HTTP to HTTPS and include HSTS headers.
 # Docker health check
 curl http://localhost:8080/health
 
-# Netlify health check
-curl https://hotel-review-generator.com/
+# Production health check
+curl https://your-hotel-communication-system.com/
 ```
 
 ### Performance Thresholds
@@ -277,7 +282,7 @@ npm run lighthouse
 ```bash
 # Check logs
 netlify logs
-docker logs hotel-review-generator
+docker logs hotel-guest-communication
 
 # Verify configuration
 npm run validate

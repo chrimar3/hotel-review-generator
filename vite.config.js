@@ -41,13 +41,24 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'agents': [
-            'src/agents/ReviewGeneratorAgent.js',
-            'src/agents/PlatformRoutingAgent.js', 
-            'src/agents/UIControllerAgent.js',
-            'src/agents/StateManagementAgent.js'
+          'services': [
+            'src/services/ErrorMonitorService.js',
+            'src/services/ABTestingService.js',
+            'src/services/HapticFeedbackService.js',
+            'src/services/AccessibilityService.js',
+            'src/services/TextQualityService.js',
+            'src/services/GuestFeedbackService.js',
+            'src/services/CRMIntegrationService.js',
+            'src/services/ExportReportingService.js',
+            'src/services/SecurityComplianceService.js',
+            'src/services/UIEnhancementService.js'
           ],
-          'app': ['src/HotelReviewApp.js']
+          'components': [
+            'src/components/MultiPropertyDashboard.js',
+            'src/components/CRMIntegrationPanel.js',
+            'src/components/ExportReportingPanel.js'
+          ],
+          'core': ['src/modules/AppCore.js']
         }
       }
     },

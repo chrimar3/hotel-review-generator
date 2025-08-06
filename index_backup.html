@@ -1,0 +1,3110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Help hotel guests create and submit reviews across multiple platforms">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ReviewGen">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#3b82f6">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#3b82f6">
+    
+    <title>Share Your Experience | Hotel Review Generator</title>
+    
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-light: rgba(59, 130, 246, 0.1);
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            --surface: #ffffff;
+            --surface-elevated: #ffffff;
+            --text-dark: #0f172a;
+            --text-medium: #334155;
+            --text-light: #64748b;
+            --text-lighter: #94a3b8;
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --border-radius-lg: 16px;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s ease;
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--background);
+            min-height: 100vh;
+            padding-bottom: 120px;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-2xl) var(--spacing-lg);
+            background: var(--surface);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), #8b5cf6, #ec4899);
+        }
+
+        .logo-placeholder {
+            width: 96px;
+            height: 96px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            border-radius: 50%;
+            margin: 0 auto var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 32px;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .logo-placeholder::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6, #ec4899);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .logo-placeholder:hover::after {
+            opacity: 1;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, var(--text-dark), var(--primary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: var(--text-medium);
+            font-size: 18px;
+            font-weight: 500;
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Form Sections */
+        .section {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary-color), #8b5cf6);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .section:hover::before {
+            opacity: 1;
+        }
+
+        .section h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            color: var(--text-dark);
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .section h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .section p {
+            color: var(--text-light);
+            font-size: 15px;
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+            font-weight: 450;
+        }
+
+        /* Feature Selection */
+        .features-grid {
+            display: grid;
+            gap: var(--spacing-sm);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            background: linear-gradient(135deg, var(--surface), #fafbfc);
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-light);
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transition: left 0.5s;
+        }
+
+        .feature-item:hover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-light), rgba(59, 130, 246, 0.05));
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-item:hover::before {
+            left: 100%;
+        }
+
+        .feature-item.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-light), rgba(59, 130, 246, 0.08));
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-item.selected::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+        }
+
+        .feature-item input[type="checkbox"] {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-medium);
+            border-radius: var(--border-radius-sm);
+            margin-right: var(--spacing-md);
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: var(--transition);
+            background: var(--surface);
+        }
+
+        .feature-item input[type="checkbox"]:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .feature-item input[type="checkbox"]:checked {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .feature-item input[type="checkbox"]:checked::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: 700;
+            animation: checkmark 0.3s ease;
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .feature-item label {
+            cursor: pointer;
+            font-size: 16px;
+            flex: 1;
+            line-height: 1.5;
+            font-weight: 500;
+            color: var(--text-medium);
+            transition: var(--transition);
+        }
+
+        .feature-item:hover label {
+            color: var(--text-dark);
+        }
+
+        .feature-item.selected label {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* Staff Recognition */
+        .staff-select {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            font-size: 16px;
+            font-weight: 500;
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, var(--surface), #fafbfc);
+            color: var(--text-dark);
+            min-height: 56px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .staff-select:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .staff-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .staff-select option {
+            padding: var(--spacing-sm);
+            background: var(--surface);
+            color: var(--text-dark);
+        }
+
+        /* Personal Comments */
+        .comment-container {
+            position: relative;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: var(--spacing-lg);
+            font-size: 16px;
+            font-family: inherit;
+            font-weight: 450;
+            line-height: 1.6;
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, var(--surface), #fafbfc);
+            color: var(--text-dark);
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        .comment-textarea:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px var(--primary-light);
+            transform: translateY(-2px);
+            background: var(--surface);
+        }
+
+        .comment-textarea::placeholder {
+            color: var(--text-lighter);
+            font-style: italic;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: var(--spacing-sm);
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .char-counter::before {
+            content: '💭';
+            font-size: 16px;
+            opacity: 0.6;
+        }
+
+        .char-counter.warning {
+            color: var(--warning-color);
+            font-weight: 600;
+        }
+
+        .char-counter.warning::before {
+            content: '⚠️';
+        }
+
+        .char-counter.error {
+            color: var(--error-color);
+            font-weight: 700;
+        }
+
+        .char-counter.error::before {
+            content: '❌';
+        }
+
+        .char-counter.excellent {
+            color: var(--success-color);
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .char-counter.excellent::before {
+            content: '✨';
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .char-counter.good {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .char-counter.good::before {
+            content: '👍';
+        }
+
+        .char-counter.empty::before {
+            content: '💭';
+            opacity: 0.4;
+        }
+
+        /* Progress bar styling for first span */
+        .char-counter span:first-child {
+            font-family: monospace;
+            font-size: 14px;
+            opacity: 0.8;
+            letter-spacing: 1px;
+            margin-right: 8px;
+        }
+
+        /* Enhanced typing feedback */
+        .char-counter.typing {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Generated Review */
+        .review-preview {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            font-size: 17px;
+            line-height: 1.7;
+            min-height: 140px;
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .review-preview::before {
+            content: '“';
+            position: absolute;
+            top: var(--spacing-md);
+            left: var(--spacing-md);
+            font-size: 48px;
+            color: var(--primary-color);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        .review-preview::after {
+            content: '”';
+            position: absolute;
+            bottom: var(--spacing-md);
+            right: var(--spacing-md);
+            font-size: 48px;
+            color: var(--primary-color);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        .review-preview:not(.empty) {
+            background: linear-gradient(135deg, var(--surface), #fafbfc);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .review-preview.empty {
+            color: var(--text-lighter);
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .review-preview.empty::before,
+        .review-preview.empty::after {
+            display: none;
+        }
+
+        /* Enhanced Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            opacity: 0.6;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .empty-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .empty-message {
+            font-size: 16px;
+            color: var(--text-medium);
+            max-width: 300px;
+            line-height: 1.5;
+        }
+
+        /* Quality Indicators */
+        .review-preview.excellent-quality {
+            border-color: var(--success-color);
+            background: linear-gradient(135deg, var(--success-light), rgba(16, 185, 129, 0.05));
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+
+        .review-preview.good-quality {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-light), rgba(59, 130, 246, 0.05));
+        }
+
+        .review-preview.needs-improvement {
+            border-color: var(--warning-color);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+        }
+
+        /* Quality Badge */
+        .quality-badge {
+            position: absolute;
+            top: -12px;
+            right: var(--spacing-lg);
+            background: var(--success-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            animation: slideInBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes slideInBounce {
+            0% {
+                transform: translateY(-20px) scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Improvement Suggestions */
+        .improvement-suggestions {
+            margin-top: var(--spacing-lg);
+            padding: var(--spacing-md);
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning-color);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .suggestions-title {
+            font-weight: 600;
+            color: var(--warning-color);
+            margin-bottom: var(--spacing-sm);
+            font-size: 14px;
+        }
+
+        .suggestions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .suggestions-list li {
+            position: relative;
+            padding-left: var(--spacing-lg);
+            margin-bottom: var(--spacing-xs);
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.4;
+        }
+
+        .suggestions-list li::before {
+            content: '💡';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 12px;
+        }
+
+        /* Buttons */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md) var(--spacing-xl);
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 56px;
+            text-decoration: none;
+            text-align: center;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.025em;
+            gap: var(--spacing-sm);
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, var(--primary-color), #4f46e5);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .button-primary:hover {
+            background: linear-gradient(135deg, var(--primary-hover), #4338ca);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .button-primary:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-md);
+        }
+
+        .button-secondary {
+            background: var(--surface);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+        }
+
+        .button-secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .button-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .button-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .copy-button {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        /* Success Feedback */
+        .success-message {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+            transform: translateY(-20px) scale(0.95);
+            opacity: 0;
+            transition: var(--transition);
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.8s;
+        }
+
+        .success-message.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .success-message.show::before {
+            left: 100%;
+        }
+
+        /* Platform Selection */
+        .platform-buttons {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .platform-primary {
+            background: var(--primary-color);
+            color: white;
+            padding: 16px;
+            font-size: 18px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .platform-secondary {
+            background: var(--surface);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        /* Enhanced Platform Intelligence */
+        .recommended-platform {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommended-platform::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary-color), #8b5cf6, #ec4899, var(--primary-color));
+            background-size: 300% 300%;
+            animation: gradientShift 3s ease infinite;
+            z-index: -1;
+            border-radius: inherit;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Source Confidence Indicator */
+        .source-confidence-indicator {
+            margin: var(--spacing-md) 0;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .confidence-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: linear-gradient(135deg, var(--primary-light), rgba(59, 130, 246, 0.05));
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .confidence-icon {
+            font-size: 16px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sticky Bottom Actions */
+        .sticky-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), var(--surface));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-light);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-xl);
+            z-index: 100;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .sticky-actions .container {
+            padding: 0 16px;
+        }
+
+        /* Loading States */
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Accessibility */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Enhanced focus indicators */
+        .feature-checkbox:focus + .feature-label,
+        .feature-item:focus-within {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 20px 12px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus States */
+        *:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        .feature-item:focus-within {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="logo-placeholder" id="hotelLogo">🏨</div>
+            <h1>Share Your Experience</h1>
+            <p>Help others discover what makes <span id="hotelName">our hotel</span> special by sharing your review</p>
+        </header>
+
+        <main>
+            <!-- Feature Selection -->
+            <section class="section">
+                <h2>What made your stay special? ✨</h2>
+                <p>Tell us about the highlights of your experience. The more you select, the more personalized your review will be!</p>
+                <fieldset class="features-grid" id="featuresGrid">
+                    <legend class="visually-hidden">What did you enjoy during your stay?</legend>
+                    <div class="feature-item">
+                        <input type="checkbox" id="service" value="excellent customer service" class="feature-checkbox">
+                        <label for="service" class="feature-label">Excellent customer service</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="rooms" value="clean and comfortable rooms">
+                        <label for="rooms">Clean and comfortable rooms</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="location" value="great location and accessibility">
+                        <label for="location">Great location and accessibility</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="dining" value="outstanding dining experience">
+                        <label for="dining">Outstanding dining experience</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="facilities" value="beautiful facilities and amenities">
+                        <label for="facilities">Beautiful facilities and amenities</label>
+                    </div>
+                    <div class="feature-item" tabindex="0">
+                        <input type="checkbox" id="value" value="exceptional value for money">
+                        <label for="value">Exceptional value for money</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Staff Recognition -->
+            <section class="section">
+                <h2>Recognize Outstanding Service 🎆</h2>
+                <p>Did someone on our team go above and beyond to make your stay memorable?</p>
+                <select class="staff-select" id="staffSelect" aria-label="Select a staff member to recognize">
+                    <option value="">Prefer not to mention</option>
+                    <option value="Sarah">Sarah</option>
+                    <option value="Michael">Michael</option>
+                    <option value="Emma">Emma</option>
+                    <option value="David">David</option>
+                    <option value="Lisa">Lisa</option>
+                    <option value="James">James</option>
+                    <option value="Maria">Maria</option>
+                    <option value="Alex">Alex</option>
+                </select>
+            </section>
+
+            <!-- Personal Comments -->
+            <section class="section">
+                <h2>Your Personal Story 📝</h2>
+                <p>Add your own thoughts to make your review unique and authentic</p>
+                <div class="comment-container">
+                    <textarea 
+                        class="comment-textarea" 
+                        id="personalComments"
+                        placeholder="Share any specific details about your experience... What made your stay memorable?"
+                        maxlength="200"
+                        aria-describedby="charCounter"
+                    ></textarea>
+                    <div class="char-counter" id="charCounter">
+                        <span></span>
+                        <span>0/200 characters</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generated Review Preview -->
+            <section class="section">
+                <h2>Your Personalized Review 🌟</h2>
+                <div class="review-preview empty" id="reviewPreview">
+                    Select features above to generate your personalized review
+                </div>
+                <div class="success-message" id="successMessage">
+                    ✓ Review copied to clipboard! You can now paste it on the review platform.
+                </div>
+                <button class="button button-primary copy-button" id="copyButton" disabled>
+                    📋 Copy Review to Clipboard
+                </button>
+            </section>
+
+            <!-- Platform Selection -->
+            <section class="section">
+                <h2>Share Your Experience 🌍</h2>
+                <div class="platform-buttons" id="platformButtons">
+                    <!-- Dynamically populated based on source parameter -->
+                </div>
+                <p style="font-size: 14px; color: var(--text-light); text-align: center; margin-top: 16px;">
+                    Tip: Copy your review first, then click the platform button to open the review page
+                </p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Sticky Bottom Actions (shown only when review is ready) -->
+    <div class="sticky-actions" id="stickyActions" style="display: none;">
+        <div class="container">
+            <button class="button button-success copy-button" id="stickyCopyButton">
+                📋 Copy & Leave Review
+            </button>
+        </div>
+    </div>
+
+    <!-- Application Scripts -->
+    <script type="module" src="src/app.js"></script>
+    
+    <!-- Legacy JavaScript removed - now using modular architecture -->
+    <script>
+        // Initialize the application (legacy support)
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Legacy] Modular application loading...');
+        });
+        class ErrorMonitor {
+            constructor() {
+                this.enabled = true;
+                this.apiEndpoint = null; // Can be configured for external monitoring
+                this.errorQueue = [];
+                this.userAgent = navigator.userAgent;
+                this.sessionId = this.generateSessionId();
+                this.setupGlobalErrorHandlers();
+                this.setupPerformanceMonitoring();
+            }
+
+            generateSessionId() {
+                return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            setupGlobalErrorHandlers() {
+                // Capture JavaScript errors
+                window.addEventListener('error', (event) => {
+                    this.logError({
+                        type: 'javascript_error',
+                        message: event.message,
+                        filename: event.filename,
+                        lineno: event.lineno,
+                        colno: event.colno,
+                        stack: event.error ? event.error.stack : null,
+                        timestamp: new Date().toISOString(),
+                        userAgent: this.userAgent,
+                        sessionId: this.sessionId
+                    });
+                });
+
+                // Capture unhandled promise rejections
+                window.addEventListener('unhandledrejection', (event) => {
+                    this.logError({
+                        type: 'unhandled_promise_rejection',
+                        message: event.reason ? event.reason.toString() : 'Unknown promise rejection',
+                        stack: event.reason && event.reason.stack ? event.reason.stack : null,
+                        timestamp: new Date().toISOString(),
+                        userAgent: this.userAgent,
+                        sessionId: this.sessionId
+                    });
+                });
+
+                // Capture resource loading errors
+                window.addEventListener('error', (event) => {
+                    if (event.target !== window) {
+                        this.logError({
+                            type: 'resource_error',
+                            message: `Failed to load resource: ${event.target.src || event.target.href || 'unknown'}`,
+                            element: event.target.tagName,
+                            timestamp: new Date().toISOString(),
+                            userAgent: this.userAgent,
+                            sessionId: this.sessionId
+                        });
+                    }
+                }, true);
+            }
+
+            setupPerformanceMonitoring() {
+                // Monitor page load performance
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        const perfData = performance.getEntriesByType('navigation')[0];
+                        if (perfData) {
+                            this.logInfo({
+                                type: 'performance_metrics',
+                                loadTime: perfData.loadEventEnd - perfData.navigationStart,
+                                domContentLoaded: perfData.domContentLoadedEventEnd - perfData.navigationStart,
+                                firstContentfulPaint: this.getFirstContentfulPaint(),
+                                timestamp: new Date().toISOString(),
+                                sessionId: this.sessionId
+                            });
+                        }
+                    }, 0);
+                });
+            }
+
+            getFirstContentfulPaint() {
+                const paintEntries = performance.getEntriesByType('paint');
+                const fcp = paintEntries.find(entry => entry.name === 'first-contentful-paint');
+                return fcp ? fcp.startTime : null;
+            }
+
+            logError(errorData) {
+                if (!this.enabled) return;
+
+                console.error('[HotelReviewApp] Error:', errorData);
+                this.errorQueue.push(errorData);
+
+                // Keep only last 50 errors to prevent memory issues
+                if (this.errorQueue.length > 50) {
+                    this.errorQueue.shift();
+                }
+
+                // Send to external monitoring service if configured
+                if (this.apiEndpoint) {
+                    this.sendToMonitoring(errorData);
+                }
+
+                // Store in localStorage for debugging
+                this.storeLocalError(errorData);
+            }
+
+            logInfo(infoData) {
+                if (!this.enabled) return;
+                console.info('[HotelReviewApp] Info:', infoData);
+            }
+
+            logWarning(warningData) {
+                if (!this.enabled) return;
+                console.warn('[HotelReviewApp] Warning:', warningData);
+            }
+
+            async sendToMonitoring(data) {
+                try {
+                    await fetch(this.apiEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                } catch (error) {
+                    // Silent fail for monitoring endpoint
+                    console.debug('Failed to send error to monitoring service:', error);
+                }
+            }
+
+            storeLocalError(errorData) {
+                try {
+                    const errors = JSON.parse(localStorage.getItem('hotelReviewApp_errors') || '[]');
+                    errors.push(errorData);
+                    
+                    // Keep only last 20 errors locally
+                    if (errors.length > 20) {
+                        errors.shift();
+                    }
+                    
+                    localStorage.setItem('hotelReviewApp_errors', JSON.stringify(errors));
+                } catch (error) {
+                    // Ignore localStorage errors
+                }
+            }
+
+            getStoredErrors() {
+                try {
+                    return JSON.parse(localStorage.getItem('hotelReviewApp_errors') || '[]');
+                } catch (error) {
+                    return [];
+                }
+            }
+
+            clearStoredErrors() {
+                try {
+                    localStorage.removeItem('hotelReviewApp_errors');
+                } catch (error) {
+                    // Ignore localStorage errors
+                }
+            }
+
+            trackUserAction(action, data = {}) {
+                this.logInfo({
+                    type: 'user_action',
+                    action: action,
+                    data: data,
+                    timestamp: new Date().toISOString(),
+                    sessionId: this.sessionId
+                });
+            }
+
+            trackError(context, error) {
+                this.logError({
+                    type: 'application_error',
+                    context: context,
+                    message: error.message,
+                    stack: error.stack,
+                    timestamp: new Date().toISOString(),
+                    userAgent: this.userAgent,
+                    sessionId: this.sessionId
+                });
+            }
+        }
+
+        // Initialize error monitoring
+        const errorMonitor = new ErrorMonitor();
+
+        // Haptic Feedback System for Enhanced Mobile UX
+        class HapticFeedback {
+            constructor() {
+                this.enabled = 'vibrate' in navigator;
+                this.supported = this.detectSupport();
+                this.patterns = {
+                    light: [10],
+                    medium: [20],
+                    heavy: [50],
+                    success: [10, 10, 10],
+                    error: [50, 50, 50],
+                    selection: [5],
+                    notification: [10, 50, 10],
+                    heartbeat: [10, 10, 10, 10, 50]
+                };
+                
+                if (this.enabled) {
+                    errorMonitor.logInfo({
+                        type: 'haptic_feedback_initialized',
+                        supported: this.supported,
+                        userAgent: navigator.userAgent
+                    });
+                }
+            }
+
+            detectSupport() {
+                const support = {
+                    vibration: 'vibrate' in navigator,
+                    webkitVibration: 'webkitVibrate' in navigator,
+                    gamepad: 'getGamepads' in navigator,
+                    deviceMotion: 'DeviceMotionEvent' in window
+                };
+                
+                return support;
+            }
+
+            // Core vibration method with fallback
+            vibrate(pattern = 'medium', fallback = true) {
+                if (!this.enabled) {
+                    if (fallback) this.visualFeedback();
+                    return false;
+                }
+
+                try {
+                    const vibrationPattern = Array.isArray(pattern) ? pattern : this.patterns[pattern] || this.patterns.medium;
+                    
+                    // Attempt vibration
+                    const result = navigator.vibrate(vibrationPattern);
+                    
+                    if (!result && navigator.webkitVibrate) {
+                        // iOS Safari fallback
+                        navigator.webkitVibrate(vibrationPattern);
+                    }
+                    
+                    // Track haptic usage
+                    errorMonitor.trackUserAction('haptic_feedback', {
+                        pattern: pattern,
+                        duration: Array.isArray(vibrationPattern) ? vibrationPattern.reduce((a, b) => a + b, 0) : vibrationPattern[0]
+                    });
+                    
+                    return true;
+                } catch (error) {
+                    errorMonitor.trackError('haptic_feedback_failed', error);
+                    if (fallback) this.visualFeedback();
+                    return false;
+                }
+            }
+
+            // Visual feedback fallback when haptic isn't available
+            visualFeedback(intensity = 'medium') {
+                const element = document.body;
+                const originalFilter = element.style.filter;
+                
+                const intensityMap = {
+                    light: 0.98,
+                    medium: 0.95,
+                    heavy: 0.90
+                };
+                
+                const scale = intensityMap[intensity] || intensityMap.medium;
+                
+                element.style.filter = `brightness(${scale})`;
+                element.style.transition = 'filter 0.1s ease';
+                
+                setTimeout(() => {
+                    element.style.filter = originalFilter;
+                    setTimeout(() => element.style.transition = '', 150);
+                }, 100);
+            }
+
+            // Context-specific haptic methods
+            onFeatureSelect() {
+                this.vibrate('selection');
+            }
+
+            onReviewGenerated() {
+                this.vibrate('success');
+            }
+
+            onCopySuccess() {
+                this.vibrate('notification');
+            }
+
+            onError() {
+                this.vibrate('error');
+            }
+
+            onQualityImprovement() {
+                this.vibrate('heartbeat');
+            }
+
+            onCharacterLimit() {
+                this.vibrate('heavy');
+            }
+
+            // Smart context-aware feedback
+            contextualFeedback(action, context = {}) {
+                switch (action) {
+                    case 'feature_selected':
+                        this.onFeatureSelect();
+                        break;
+                    case 'review_generated':
+                        if (context.qualityScore >= 85) {
+                            this.vibrate('heartbeat'); // Excellent quality
+                        } else {
+                            this.onReviewGenerated();
+                        }
+                        break;
+                    case 'copy_success':
+                        this.onCopySuccess();
+                        break;
+                    case 'character_warning':
+                        this.vibrate('light');
+                        break;
+                    case 'character_limit':
+                        this.onCharacterLimit();
+                        break;
+                    case 'error':
+                        this.onError();
+                        break;
+                    case 'quality_improvement':
+                        this.onQualityImprovement();
+                        break;
+                    default:
+                        this.vibrate('light');
+                }
+            }
+
+            // Accessibility considerations
+            respectsReducedMotion() {
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (prefersReducedMotion) {
+                    this.enabled = false;
+                    errorMonitor.logInfo({
+                        type: 'haptic_disabled_reduced_motion',
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                return prefersReducedMotion;
+            }
+
+            // Enable/disable based on user preference
+            setEnabled(enabled) {
+                this.enabled = enabled && 'vibrate' in navigator;
+                errorMonitor.trackUserAction('haptic_preference_changed', { enabled: this.enabled });
+            }
+        }
+
+        // Initialize haptic feedback
+        const hapticFeedback = new HapticFeedback();
+
+        // Respect user preferences
+        hapticFeedback.respectsReducedMotion();
+
+        // Configuration and State
+        const config = {
+            hotelName: 'our hotel',
+            staffMembers: ['Sarah', 'Michael', 'Emma', 'David', 'Lisa', 'James', 'Maria', 'Alex'],
+            maxCommentLength: 200,
+            platforms: {
+                booking: {
+                    name: 'Booking.com',
+                    url: 'https://www.booking.com/reviewcenter.html',
+                    primary: true
+                },
+                expedia: {
+                    name: 'Expedia',
+                    url: 'https://www.expedia.com/traveler/review/',
+                    primary: true
+                },
+                tripadvisor: {
+                    name: 'TripAdvisor',
+                    url: 'https://www.tripadvisor.com/UserReview',
+                    primary: false
+                },
+                google: {
+                    name: 'Google Maps',
+                    url: 'https://search.google.com/local/writereview',
+                    primary: false
+                }
+            }
+        };
+
+        let state = {
+            selectedFeatures: [],
+            selectedStaff: '',
+            personalComments: '',
+            generatedReview: '',
+            source: 'direct',
+            hotelName: config.hotelName
+        };
+
+        // DOM Elements
+        const elements = {
+            hotelLogo: document.getElementById('hotelLogo'),
+            hotelName: document.getElementById('hotelName'),
+            featuresGrid: document.getElementById('featuresGrid'),
+            staffSelect: document.getElementById('staffSelect'),
+            personalComments: document.getElementById('personalComments'),
+            charCounter: document.getElementById('charCounter'),
+            reviewPreview: document.getElementById('reviewPreview'),
+            copyButton: document.getElementById('copyButton'),
+            stickyCopyButton: document.getElementById('stickyCopyButton'),
+            successMessage: document.getElementById('successMessage'),
+            stickyActions: document.getElementById('stickyActions'),
+            platformButtons: document.getElementById('platformButtons')
+        };
+
+        // Utility Functions
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Review Generation
+        function generateReview() {
+            if (state.selectedFeatures.length === 0 && !state.personalComments.trim()) {
+                return '';
+            }
+
+            let review = `I had a wonderful stay at ${state.hotelName}.`;
+
+            // Add selected features
+            if (state.selectedFeatures.length > 0) {
+                const features = [...state.selectedFeatures];
+                
+                if (features.length === 1) {
+                    review += ` The ${features[0]} was exceptional.`;
+                } else if (features.length === 2) {
+                    review += ` The ${features[0]} and ${features[1]} were outstanding.`;
+                } else {
+                    const lastFeature = features.pop();
+                    review += ` The ${features.join(', ')} were all excellent, and the ${lastFeature} was particularly impressive.`;
+                }
+            }
+
+            // Add staff recognition
+            if (state.selectedStaff) {
+                const recognitionPhrases = [
+                    `Special thanks to ${state.selectedStaff} for exceptional service.`,
+                    `${state.selectedStaff} went above and beyond to make our stay memorable.`,
+                    `We were particularly impressed by ${state.selectedStaff}'s professionalism and helpfulness.`,
+                    `${state.selectedStaff} provided outstanding customer service throughout our stay.`
+                ];
+                review += ` ${recognitionPhrases[Math.floor(Math.random() * recognitionPhrases.length)]}`;
+            }
+
+            // Add personal comments
+            if (state.personalComments.trim()) {
+                review += ` ${state.personalComments.trim()}`;
+            }
+
+            // Add closing
+            const closingPhrases = [
+                'Highly recommend!',
+                'Will definitely return!',
+                'Exceeded expectations!',
+                'Five stars!',
+                'Outstanding experience overall!',
+                'Perfect for our stay!'
+            ];
+            review += ` ${closingPhrases[Math.floor(Math.random() * closingPhrases.length)]}`;
+
+            return review;
+        }
+
+        // Enhanced UI Updates with Smart Suggestions
+        function updateReviewPreview() {
+            const review = generateReview();
+            state.generatedReview = review;
+            
+            if (review) {
+                // Track A/B testing conversion for review generation
+                abTesting.trackConversion('review_generated', {
+                    length: review.length,
+                    wordCount: review.split(' ').length,
+                    featuresSelected: state.selectedFeatures.length,
+                    hasStaff: !!state.selectedStaff,
+                    hasComments: !!state.personalComments.trim()
+                });
+                // Enhanced preview with real-time quality feedback
+                elements.reviewPreview.textContent = review;
+                elements.reviewPreview.classList.remove('empty', 'needs-improvement');
+                
+                // Smart quality assessment
+                const wordCount = review.split(' ').length;
+                const qualityMetrics = assessReviewQuality(review, wordCount);
+                
+                // Add quality indicators
+                if (qualityMetrics.score >= 85) {
+                    elements.reviewPreview.classList.add('excellent-quality');
+                    addQualityBadge('🌟 Excellent review!');
+                } else if (qualityMetrics.score >= 70) {
+                    elements.reviewPreview.classList.add('good-quality');
+                    addQualityBadge('👍 Great review!');
+                } else {
+                    elements.reviewPreview.classList.add('needs-improvement');
+                    addImprovementSuggestions(qualityMetrics.suggestions);
+                }
+                
+                elements.copyButton.disabled = false;
+                elements.stickyCopyButton.disabled = false;
+                elements.stickyActions.style.display = 'block';
+                
+                // Smart haptic feedback for review quality
+                hapticFeedback.contextualFeedback('review_generated', {
+                    qualityScore: qualityMetrics.score,
+                    wordCount: wordCount
+                });
+                
+                // Track review generation analytics
+                errorMonitor.trackUserAction('review_updated', {
+                    wordCount: wordCount,
+                    characterCount: review.length,
+                    qualityScore: qualityMetrics.score,
+                    featuresCount: state.selectedFeatures.length,
+                    hasStaff: !!state.selectedStaff,
+                    hasComments: !!state.personalComments.trim()
+                });
+                
+            } else {
+                // Enhanced empty state with smart suggestions
+                const suggestions = getSmartSuggestions();
+                elements.reviewPreview.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">✨</div>
+                        <div class="empty-title">Ready to create your review!</div>
+                        <div class="empty-message">${suggestions}</div>
+                    </div>
+                `;
+                elements.reviewPreview.classList.add('empty');
+                elements.copyButton.disabled = true;
+                elements.stickyCopyButton.disabled = true;
+                elements.stickyActions.style.display = 'none';
+            }
+        }
+
+        // Smart review quality assessment
+        function assessReviewQuality(review, wordCount) {
+            let score = 50; // Base score
+            const suggestions = [];
+            
+            // Word count scoring
+            if (wordCount >= 20 && wordCount <= 50) {
+                score += 25; // Optimal length
+            } else if (wordCount < 20) {
+                score += 10;
+                suggestions.push('Add more details to make your review more helpful');
+            } else if (wordCount > 50) {
+                score += 15;
+                suggestions.push('Consider condensing for better readability');
+            }
+            
+            // Feature diversity scoring
+            const featureCount = state.selectedFeatures.length;
+            if (featureCount >= 3) {
+                score += 20;
+            } else if (featureCount >= 2) {
+                score += 15;
+            } else if (featureCount === 1) {
+                score += 5;
+                suggestions.push('Select more features to create a richer review');
+            }
+            
+            // Personal touch scoring
+            if (state.personalComments.trim().length > 20) {
+                score += 15;
+            } else if (state.personalComments.trim().length > 0) {
+                score += 5;
+                suggestions.push('Add more personal details for authenticity');
+            } else {
+                suggestions.push('Add personal comments to make your review unique');
+            }
+            
+            // Staff recognition bonus
+            if (state.selectedStaff) {
+                score += 10;
+            } else {
+                suggestions.push('Consider recognizing outstanding staff members');
+            }
+            
+            return { score: Math.min(100, score), suggestions };
+        }
+
+        // Generate smart suggestions based on current state
+        function getSmartSuggestions() {
+            if (state.selectedFeatures.length === 0 && !state.personalComments.trim()) {
+                return 'Start by selecting what you enjoyed most about your stay, then add personal details to make it authentic.';
+            } else if (state.selectedFeatures.length > 0 && !state.personalComments.trim()) {
+                return 'Great! Now add some personal comments to make your review unique and helpful to other travelers.';
+            } else if (state.selectedFeatures.length === 0 && state.personalComments.trim()) {
+                return 'Your personal touch is perfect! Now select some features to create a complete review.';
+            } else {
+                return 'Perfect! Your review is ready to be generated and shared.';
+            }
+        }
+
+        // Add quality badge to preview
+        function addQualityBadge(message) {
+            const existingBadge = elements.reviewPreview.querySelector('.quality-badge');
+            if (existingBadge) existingBadge.remove();
+            
+            const badge = document.createElement('div');
+            badge.className = 'quality-badge';
+            badge.textContent = message;
+            elements.reviewPreview.appendChild(badge);
+        }
+
+        // Add improvement suggestions
+        function addImprovementSuggestions(suggestions) {
+            if (suggestions.length === 0) return;
+            
+            const existingSuggestions = elements.reviewPreview.querySelector('.improvement-suggestions');
+            if (existingSuggestions) existingSuggestions.remove();
+            
+            const suggestionsContainer = document.createElement('div');
+            suggestionsContainer.className = 'improvement-suggestions';
+            suggestionsContainer.innerHTML = `
+                <div class="suggestions-title">💡 Suggestions to improve your review:</div>
+                <ul class="suggestions-list">
+                    ${suggestions.slice(0, 2).map(suggestion => `<li>${suggestion}</li>`).join('')}
+                </ul>
+            `;
+            elements.reviewPreview.appendChild(suggestionsContainer);
+        }
+
+        function updateCharCounter() {
+            const length = state.personalComments.length;
+            const remaining = config.maxCommentLength - length;
+            const percentage = (length / config.maxCommentLength) * 100;
+            
+            const counterElement = elements.charCounter.querySelector('span:last-child');
+            const progressElement = elements.charCounter.querySelector('span:first-child');
+            
+            // Enhanced character count display with remaining characters
+            if (remaining > 0) {
+                counterElement.textContent = `${length}/${config.maxCommentLength} characters`;
+            } else {
+                counterElement.textContent = `${Math.abs(remaining)} characters over limit`;
+            }
+            
+            // Visual progress indicator
+            const progressBar = `${'█'.repeat(Math.floor(percentage / 10))}${'░'.repeat(10 - Math.floor(percentage / 10))}`;
+            progressElement.textContent = progressBar;
+            
+            // Update progress bar for A/B testing variant
+            const progressBarElement = document.getElementById('char-progress-bar');
+            if (progressBarElement) {
+                progressBarElement.style.width = `${Math.min(percentage, 100)}%`;
+                
+                // Change color based on usage
+                if (percentage < 50) {
+                    progressBarElement.style.backgroundColor = '#3b82f6'; // Blue for low usage
+                } else if (percentage < 80) {
+                    progressBarElement.style.backgroundColor = '#f59e0b'; // Yellow for medium usage
+                } else if (percentage < 100) {
+                    progressBarElement.style.backgroundColor = '#ef4444'; // Red for high usage
+                } else {
+                    progressBarElement.style.backgroundColor = '#dc2626'; // Dark red for over limit
+                }
+            }
+            
+            // Remove all classes first
+            elements.charCounter.classList.remove('warning', 'error', 'excellent', 'good');
+            
+            // Smart feedback based on content quality and length
+            if (length === 0) {
+                // Empty state
+                elements.charCounter.classList.add('empty');
+            } else if (length < 20) {
+                // Too short - encourage more detail
+                elements.charCounter.classList.add('good');
+                counterElement.textContent += ' - Add more details for better reviews';
+            } else if (length >= 50 && length <= config.maxCommentLength * 0.8) {
+                // Sweet spot - perfect length
+                elements.charCounter.classList.add('excellent');
+                counterElement.textContent += ' - Perfect length! 👌';
+            } else if (length > config.maxCommentLength * 0.9 && length < config.maxCommentLength) {
+                // Approaching limit
+                elements.charCounter.classList.add('warning');
+                counterElement.textContent += ` - ${remaining} characters remaining`;
+            } else if (length >= config.maxCommentLength) {
+                // Over limit
+                elements.charCounter.classList.add('error');
+            } else {
+                // Good length
+                elements.charCounter.classList.add('good');
+            }
+            
+            // Live typing animation with different intensities
+            if (length > 0) {
+                const intensity = Math.min(1.05, 1 + (percentage / 1000));
+                elements.charCounter.style.transform = `scale(${intensity})`;
+                setTimeout(() => {
+                    elements.charCounter.style.transform = 'scale(1)';
+                }, 150);
+            }
+            
+            // Smart haptic feedback based on character input state
+            const quality = length >= 50 && length <= config.maxCommentLength * 0.8 ? 'excellent' : 
+                           length >= 20 && length < 50 ? 'good' : 
+                           length > config.maxCommentLength ? 'overlimit' : 'short';
+            
+            // Context-aware haptic feedback
+            if (length === config.maxCommentLength) {
+                hapticFeedback.contextualFeedback('character_limit');
+            } else if (length > config.maxCommentLength * 0.9 && length < config.maxCommentLength) {
+                hapticFeedback.contextualFeedback('character_warning');
+            } else if (quality === 'excellent' && elements.charCounter.classList.contains('excellent')) {
+                // Trigger celebration haptic on reaching excellent quality
+                hapticFeedback.contextualFeedback('quality_improvement');
+            }
+            
+            // Track character input analytics
+            errorMonitor.trackUserAction('character_input', {
+                length: length,
+                percentage: percentage,
+                remaining: remaining,
+                quality: quality
+            });
+            
+            // Update review preview immediately for real-time feedback
+            updateReviewPreview();
+        }
+
+        function showSuccessMessage() {
+            elements.successMessage.classList.add('show');
+            setTimeout(() => {
+                elements.successMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // Clipboard Operations
+        async function copyToClipboard() {
+            if (!state.generatedReview) {
+                errorMonitor.logWarning({
+                    type: 'clipboard_warning',
+                    message: 'Attempted to copy empty review',
+                    timestamp: new Date().toISOString()
+                });
+                return false;
+            }
+
+            try {
+                errorMonitor.trackUserAction('clipboard_copy_attempt', {
+                    reviewLength: state.generatedReview.length,
+                    method: 'clipboard_api'
+                });
+
+                await navigator.clipboard.writeText(state.generatedReview);
+                
+                errorMonitor.trackUserAction('clipboard_copy_success', {
+                    reviewLength: state.generatedReview.length,
+                    method: 'clipboard_api'
+                });
+                
+                // Track A/B testing conversion for successful copy
+                abTesting.trackConversion('review_copied', {
+                    length: state.generatedReview.length,
+                    method: 'clipboard_api',
+                    platform: state.detectedSources?.primary || 'unknown'
+                });
+                
+                return true;
+            } catch (err) {
+                errorMonitor.logWarning({
+                    type: 'clipboard_api_fallback',
+                    message: 'Clipboard API failed, using fallback',
+                    error: err.message,
+                    timestamp: new Date().toISOString()
+                });
+
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = state.generatedReview;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    const result = document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    if (result) {
+                        errorMonitor.trackUserAction('clipboard_copy_success', {
+                            reviewLength: state.generatedReview.length,
+                            method: 'execCommand'
+                        });
+                        
+                        // Track A/B testing conversion for successful fallback copy
+                        abTesting.trackConversion('review_copied', {
+                            length: state.generatedReview.length,
+                            method: 'execCommand',
+                            platform: state.detectedSources?.primary || 'unknown'
+                        });
+                    } else {
+                        errorMonitor.trackError('clipboard_fallback_failed', new Error('execCommand returned false'));
+                    }
+                    
+                    return result;
+                } catch (fallbackErr) {
+                    document.body.removeChild(textArea);
+                    errorMonitor.trackError('clipboard_complete_failure', fallbackErr);
+                    return false;
+                }
+            }
+        }
+
+        // Advanced Platform Intelligence with Dynamic Routing
+        function detectPlatform() {
+            const source = getUrlParameter('source') || 'direct';
+            const hotel = getUrlParameter('hotel');
+            const referrer = document.referrer;
+            const userAgent = navigator.userAgent;
+            
+            // Enhanced source detection with referrer analysis
+            const detectedSource = analyzeTrafficSource(source, referrer, userAgent);
+            state.source = detectedSource.primary;
+            state.detectedSources = detectedSource;
+            
+            if (hotel) {
+                state.hotelName = decodeURIComponent(hotel.replace(/[-_]/g, ' '));
+                config.hotelName = state.hotelName;
+                elements.hotelName.textContent = state.hotelName;
+            }
+
+            // Enhanced platform setup with user preference learning
+            setupIntelligentPlatformButtons();
+            
+            // Track platform detection analytics
+            errorMonitor.trackUserAction('platform_detected', {
+                source: state.source,
+                detectedSources: state.detectedSources,
+                referrer: referrer ? referrer.slice(0, 100) : 'none', // Truncate for privacy
+                hotel: !!hotel
+            });
+        }
+
+        // Analyze traffic source with multiple detection methods
+        function analyzeTrafficSource(urlSource, referrer, userAgent) {
+            const analysis = {
+                primary: urlSource || 'direct',
+                confidence: urlSource ? 0.9 : 0.3,
+                methods: []
+            };
+
+            // Method 1: URL parameter (highest confidence)
+            if (urlSource && urlSource !== 'direct') {
+                analysis.methods.push({
+                    method: 'url_parameter',
+                    result: urlSource,
+                    confidence: 0.9
+                });
+            }
+
+            // Method 2: Referrer analysis
+            if (referrer) {
+                const referrerSource = detectSourceFromReferrer(referrer);
+                if (referrerSource && referrerSource !== 'unknown') {
+                    analysis.methods.push({
+                        method: 'referrer_analysis',
+                        result: referrerSource,
+                        confidence: 0.7
+                    });
+                    
+                    // Override if no URL parameter and high confidence referrer
+                    if (!urlSource || urlSource === 'direct') {
+                        analysis.primary = referrerSource;
+                        analysis.confidence = 0.7;
+                    }
+                }
+            }
+
+            // Method 3: User agent platform hints
+            const platformHints = detectPlatformHints(userAgent);
+            if (platformHints.length > 0) {
+                analysis.methods.push({
+                    method: 'user_agent_hints',
+                    result: platformHints,
+                    confidence: 0.4
+                });
+            }
+
+            // Method 4: Historical user preference (stored in localStorage)
+            const userPreference = getUserPlatformPreference();
+            if (userPreference) {
+                analysis.methods.push({
+                    method: 'user_preference',
+                    result: userPreference,
+                    confidence: 0.6
+                });
+                
+                // Boost confidence if consistent with other signals
+                if (analysis.primary === userPreference.preferred) {
+                    analysis.confidence = Math.min(1.0, analysis.confidence + 0.2);
+                }
+            }
+
+            return analysis;
+        }
+
+        // Detect platform from referrer URL
+        function detectSourceFromReferrer(referrer) {
+            const referrerMap = {
+                'booking.com': 'booking',
+                'expedia.com': 'expedia',
+                'expedia.co.uk': 'expedia',
+                'expedia.ca': 'expedia',
+                'tripadvisor.com': 'tripadvisor',
+                'tripadvisor.co.uk': 'tripadvisor',
+                'google.com': 'google',
+                'google.co.uk': 'google',
+                'airbnb.com': 'airbnb',
+                'hotels.com': 'hotels'
+            };
+
+            for (const [domain, source] of Object.entries(referrerMap)) {
+                if (referrer.includes(domain)) {
+                    return source;
+                }
+            }
+
+            return 'unknown';
+        }
+
+        // Detect platform hints from user agent
+        function detectPlatformHints(userAgent) {
+            const hints = [];
+            
+            // Mobile app detection
+            if (userAgent.includes('BookingApp')) hints.push('booking');
+            if (userAgent.includes('ExpediaApp')) hints.push('expedia');
+            if (userAgent.includes('TripAdvisor')) hints.push('tripadvisor');
+            
+            // Browser patterns that might indicate platform usage
+            if (userAgent.includes('Chrome') && userAgent.includes('Mobile')) {
+                hints.push('mobile_primary');
+            }
+            
+            return hints;
+        }
+
+        // Get user's historical platform preference
+        function getUserPlatformPreference() {
+            try {
+                const preference = localStorage.getItem('hotelReview_platformPreference');
+                return preference ? JSON.parse(preference) : null;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        // Store user platform preference
+        function updateUserPlatformPreference(platform, action = 'click') {
+            try {
+                const current = getUserPlatformPreference() || { 
+                    preferred: platform, 
+                    count: 0, 
+                    lastUsed: Date.now() 
+                };
+                
+                if (current.preferred === platform) {
+                    current.count += 1;
+                } else if (action === 'click') {
+                    // Switch preference if user consistently uses different platform
+                    current.preferred = platform;
+                    current.count = 1;
+                }
+                
+                current.lastUsed = Date.now();
+                
+                localStorage.setItem('hotelReview_platformPreference', JSON.stringify(current));
+                
+                errorMonitor.trackUserAction('platform_preference_updated', {
+                    platform: platform,
+                    action: action,
+                    count: current.count
+                });
+                
+            } catch (error) {
+                // Ignore localStorage errors
+            }
+        }
+
+        function setupIntelligentPlatformButtons() {
+            const userPreference = getUserPlatformPreference();
+            const detectionConfidence = state.detectedSources?.confidence || 0.5;
+            
+            // Enhanced platform configuration with dynamic prioritization
+            const basePlatformConfig = {
+                direct: {
+                    primary: ['tripadvisor'],
+                    secondary: ['google', 'booking']
+                },
+                booking: {
+                    primary: ['booking'],
+                    secondary: ['tripadvisor', 'google']
+                },
+                expedia: {
+                    primary: ['expedia'],
+                    secondary: ['tripadvisor', 'google']
+                },
+                tripadvisor: {
+                    primary: ['tripadvisor'],
+                    secondary: ['google', 'booking']
+                },
+                google: {
+                    primary: ['google'],
+                    secondary: ['tripadvisor', 'booking']
+                }
+            };
+
+            // Get base configuration
+            let setup = basePlatformConfig[state.source] || basePlatformConfig.direct;
+            
+            // Apply intelligent reordering based on user preferences
+            if (userPreference && detectionConfidence < 0.8) {
+                setup = reorderPlatformsByPreference(setup, userPreference);
+            }
+
+            elements.platformButtons.innerHTML = '';
+
+            // Add primary platform button with enhanced analytics
+            setup.primary.forEach((platformKey, index) => {
+                const platform = config.platforms[platformKey];
+                if (platform) {
+                    const button = createIntelligentPlatformButton(platform, platformKey, 'primary', index === 0);
+                    elements.platformButtons.appendChild(button);
+                }
+            });
+
+            // Add secondary platform buttons with smart suggestions
+            setup.secondary.forEach((platformKey, index) => {
+                const platform = config.platforms[platformKey];
+                if (platform) {
+                    const button = createIntelligentPlatformButton(platform, platformKey, 'secondary', false);
+                    elements.platformButtons.appendChild(button);
+                }
+            });
+
+            // Add confidence indicator for detected source
+            if (detectionConfidence > 0.7) {
+                addSourceConfidenceIndicator(state.source, detectionConfidence);
+            }
+        }
+
+        // Reorder platforms based on user preference
+        function reorderPlatformsByPreference(setup, userPreference) {
+            const preferred = userPreference.preferred;
+            
+            // If user's preferred platform is in secondary, promote it
+            if (setup.secondary.includes(preferred) && !setup.primary.includes(preferred)) {
+                return {
+                    primary: [preferred, ...setup.primary],
+                    secondary: setup.secondary.filter(p => p !== preferred)
+                };
+            }
+            
+            return setup;
+        }
+
+        // Create intelligent platform button with enhanced features
+        function createIntelligentPlatformButton(platform, platformKey, type, isPrimary) {
+            const button = document.createElement('a');
+            button.href = platform.url;
+            button.target = '_blank';
+            button.rel = 'noopener noreferrer';
+            button.className = `button platform-${type}`;
+            
+            // Enhanced button text based on platform and context
+            if (type === 'primary') {
+                button.textContent = `${isPrimary ? '🌟 ' : ''}Leave Review on ${platform.name}`;
+            } else {
+                button.textContent = `Also review on ${platform.name}`;
+            }
+            
+            button.setAttribute('aria-label', `Open ${platform.name} to leave a review`);
+            
+            // Add click tracking and preference learning
+            button.addEventListener('click', (e) => {
+                // Track platform click with context
+                errorMonitor.trackUserAction('platform_button_click', {
+                    platform: platformKey,
+                    type: type,
+                    isPrimary: isPrimary,
+                    source: state.source,
+                    confidence: state.detectedSources?.confidence
+                });
+                
+                // Track A/B testing conversion for platform redirect
+                abTesting.trackConversion('platform_redirect', {
+                    platform: platformKey,
+                    type: type,
+                    isPrimary: isPrimary,
+                    reviewLength: state.generatedReview ? state.generatedReview.length : 0,
+                    hasReview: !!state.generatedReview
+                });
+                
+                // Update user preference
+                updateUserPlatformPreference(platformKey, 'click');
+                
+                // Haptic feedback for button click
+                hapticFeedback.vibrate('selection');
+            });
+            
+            // Add visual indicators for high-confidence matches
+            if (state.source === platformKey && state.detectedSources?.confidence > 0.8) {
+                button.style.boxShadow = '0 0 15px rgba(59, 130, 246, 0.4)';
+                button.classList.add('recommended-platform');
+            }
+            
+            return button;
+        }
+
+        // Add source confidence indicator
+        function addSourceConfidenceIndicator(source, confidence) {
+            const indicator = document.createElement('div');
+            indicator.className = 'source-confidence-indicator';
+            indicator.innerHTML = `
+                <div class="confidence-badge">
+                    <span class="confidence-icon">🎯</span>
+                    <span class="confidence-text">Smart Detection: ${Math.round(confidence * 100)}% confident you came from ${source}</span>
+                </div>
+            `;
+            
+            elements.platformButtons.appendChild(indicator);
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                if (indicator.parentNode) {
+                    indicator.style.opacity = '0';
+                    setTimeout(() => indicator.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Event Handlers
+        function handleFeatureChange(checkbox) {
+            const value = checkbox.value;
+            const isChecked = checkbox.checked;
+            const featureItem = checkbox.parentElement;
+
+            if (isChecked) {
+                if (!state.selectedFeatures.includes(value)) {
+                    state.selectedFeatures.push(value);
+                }
+                featureItem.classList.add('selected');
+                
+                // Enhanced micro-interaction with haptic feedback
+                featureItem.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    featureItem.style.transform = '';
+                }, 200);
+                
+                // Smart haptic feedback
+                hapticFeedback.contextualFeedback('feature_selected', {
+                    featureCount: state.selectedFeatures.length,
+                    feature: value
+                });
+                
+                // Track A/B testing conversion for feature selection
+                abTesting.trackConversion('feature_selected', {
+                    feature: value,
+                    totalSelected: state.selectedFeatures.length,
+                    selectionOrder: state.selectedFeatures.length
+                });
+                
+            } else {
+                state.selectedFeatures = state.selectedFeatures.filter(f => f !== value);
+                featureItem.classList.remove('selected');
+                
+                // Light haptic feedback for deselection
+                hapticFeedback.vibrate('light');
+            }
+
+            // Track feature interaction
+            errorMonitor.trackUserAction('feature_interaction', {
+                feature: value,
+                selected: isChecked,
+                totalSelected: state.selectedFeatures.length
+            });
+
+            updateReviewPreview();
+        }
+
+        function handleStaffChange() {
+            state.selectedStaff = elements.staffSelect.value;
+            updateReviewPreview();
+        }
+
+        function handleCommentsChange() {
+            state.personalComments = elements.personalComments.value;
+            updateCharCounter();
+            updateReviewPreview();
+        }
+
+        async function handleCopyClick() {
+            const button = event.target;
+            const originalText = button.textContent;
+            
+            button.classList.add('loading');
+            button.textContent = 'Copying...';
+            
+            const success = await copyToClipboard();
+            
+            button.classList.remove('loading');
+            
+            if (success) {
+                button.textContent = '✓ Copied!';
+                button.classList.add('button-success');
+                showSuccessMessage();
+                
+                // Success haptic feedback
+                hapticFeedback.contextualFeedback('copy_success');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('button-success');
+                }, 2000);
+            } else {
+                button.textContent = '❌ Copy failed';
+                
+                // Error haptic feedback
+                hapticFeedback.contextualFeedback('error');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            }
+        }
+
+        // Keyboard Navigation
+        function handleFeatureKeyPress(event, checkbox) {
+            if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault();
+                checkbox.checked = !checkbox.checked;
+                handleFeatureChange(checkbox);
+            }
+        }
+
+        // Initialize Application
+        function initializeApp() {
+            try {
+                const initStart = performance.now();
+                
+                errorMonitor.logInfo({
+                    type: 'app_initialization_start',
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    viewport: {
+                        width: window.innerWidth,
+                        height: window.innerHeight
+                    }
+                });
+
+                // Detect platform and setup
+                detectPlatform();
+
+                // Feature selection event listeners with error handling
+                elements.featuresGrid.addEventListener('click', (e) => {
+                    try {
+                        const featureItem = e.target.closest('.feature-item');
+                        if (featureItem) {
+                            const checkbox = featureItem.querySelector('input[type="checkbox"]');
+                            if (e.target !== checkbox) {
+                                checkbox.checked = !checkbox.checked;
+                            }
+                            handleFeatureChange(checkbox);
+                        }
+                    } catch (error) {
+                        errorMonitor.trackError('feature_selection_click', error);
+                    }
+                });
+
+                elements.featuresGrid.addEventListener('keydown', (e) => {
+                    try {
+                        const featureItem = e.target.closest('.feature-item');
+                        if (featureItem) {
+                            const checkbox = featureItem.querySelector('input[type="checkbox"]');
+                            handleFeatureKeyPress(e, checkbox);
+                        }
+                    } catch (error) {
+                        errorMonitor.trackError('feature_selection_keydown', error);
+                    }
+                });
+
+                // Staff selection with error handling
+                elements.staffSelect.addEventListener('change', (e) => {
+                    try {
+                        handleStaffChange(e);
+                    } catch (error) {
+                        errorMonitor.trackError('staff_selection', error);
+                    }
+                });
+
+                // Personal comments with error handling
+                elements.personalComments.addEventListener('input', (e) => {
+                    try {
+                        handleCommentsChange(e);
+                    } catch (error) {
+                        errorMonitor.trackError('comments_input', error);
+                    }
+                });
+
+                // Copy buttons with error handling
+                elements.copyButton.addEventListener('click', (e) => {
+                    try {
+                        handleCopyClick(e);
+                    } catch (error) {
+                        errorMonitor.trackError('copy_button_click', error);
+                    }
+                });
+                
+                elements.stickyCopyButton.addEventListener('click', (e) => {
+                    try {
+                        handleCopyClick(e);
+                    } catch (error) {
+                        errorMonitor.trackError('sticky_copy_button_click', error);
+                    }
+                });
+
+                // Initialize character counter
+                updateCharCounter();
+                
+                // Initial review update
+                updateReviewPreview();
+
+                // Apply A/B test variants
+                setTimeout(() => {
+                    abTesting.applyVariantModifications();
+                }, 100);
+
+                const initEnd = performance.now();
+                const initTime = initEnd - initStart;
+
+                errorMonitor.logInfo({
+                    type: 'app_initialization_complete',
+                    timestamp: new Date().toISOString(),
+                    initTime: initTime,
+                    elementsFound: Object.keys(elements).length
+                });
+
+                console.log('Hotel Review Generator initialized successfully in', initTime.toFixed(2), 'ms');
+                
+            } catch (error) {
+                errorMonitor.trackError('app_initialization_failed', error);
+                console.error('Failed to initialize Hotel Review Generator:', error);
+                
+                // Show user-friendly error message
+                document.body.innerHTML = `
+                    <div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">
+                        <h2>Oops! Something went wrong</h2>
+                        <p>We're having trouble loading the review generator. Please refresh the page to try again.</p>
+                        <button onclick="location.reload()" style="background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">
+                            Refresh Page
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // ==================== A/B TESTING FRAMEWORK ====================
+        
+        /**
+         * A/B Testing Framework for conversion optimization
+         * Supports multiple test variations with automatic assignment and tracking
+         */
+        class ABTestingFramework {
+            constructor() {
+                this.tests = new Map();
+                this.userVariants = this.loadUserVariants();
+                this.conversionEvents = ['review_generated', 'review_copied', 'platform_redirect'];
+                this.initializeDefaultTests();
+            }
+
+            // Load user's assigned variants from localStorage
+            loadUserVariants() {
+                try {
+                    const stored = localStorage.getItem('hotelReview_abTests');
+                    return stored ? JSON.parse(stored) : {};
+                } catch (error) {
+                    errorMonitor.trackError('ab_testing_load_variants', error);
+                    return {};
+                }
+            }
+
+            // Save user's assigned variants
+            saveUserVariants() {
+                try {
+                    localStorage.setItem('hotelReview_abTests', JSON.stringify(this.userVariants));
+                } catch (error) {
+                    errorMonitor.trackError('ab_testing_save_variants', error);
+                }
+            }
+
+            // Define A/B test configuration
+            defineTest(testName, config) {
+                this.tests.set(testName, {
+                    name: testName,
+                    variants: config.variants || ['control', 'variation'],
+                    trafficAllocation: config.trafficAllocation || 0.5,
+                    description: config.description || '',
+                    startDate: config.startDate || new Date().toISOString(),
+                    endDate: config.endDate || null,
+                    active: config.active !== false,
+                    conversionEvents: config.conversionEvents || this.conversionEvents
+                });
+
+                // Assign user to variant if not already assigned
+                if (!this.userVariants[testName] && this.isTestActive(testName)) {
+                    this.assignUserToVariant(testName);
+                }
+            }
+
+            // Check if test is currently active
+            isTestActive(testName) {
+                const test = this.tests.get(testName);
+                if (!test || !test.active) return false;
+
+                const now = new Date();
+                const startDate = new Date(test.startDate);
+                if (now < startDate) return false;
+
+                if (test.endDate && now > new Date(test.endDate)) return false;
+
+                return true;
+            }
+
+            // Assign user to a test variant
+            assignUserToVariant(testName) {
+                const test = this.tests.get(testName);
+                if (!test) return null;
+
+                // Use deterministic assignment based on sessionId for consistency
+                const hash = this.hashString(errorMonitor.sessionId + testName);
+                const random = (hash % 10000) / 10000; // 0-1 range
+
+                // Determine variant based on traffic allocation
+                let variant = 'control';
+                let threshold = 0;
+                
+                for (const [index, variantName] of test.variants.entries()) {
+                    const allocation = Array.isArray(test.trafficAllocation) 
+                        ? test.trafficAllocation[index] || (1 / test.variants.length)
+                        : (1 / test.variants.length);
+                    
+                    threshold += allocation;
+                    if (random < threshold) {
+                        variant = variantName;
+                        break;
+                    }
+                }
+
+                this.userVariants[testName] = {
+                    variant: variant,
+                    assignedAt: new Date().toISOString(),
+                    sessionId: errorMonitor.sessionId
+                };
+
+                this.saveUserVariants();
+
+                // Track assignment
+                errorMonitor.trackUserAction('ab_test_assigned', {
+                    testName: testName,
+                    variant: variant,
+                    timestamp: new Date().toISOString()
+                });
+
+                return variant;
+            }
+
+            // Get user's variant for a test
+            getVariant(testName) {
+                if (!this.isTestActive(testName)) return 'control';
+                
+                const userVariant = this.userVariants[testName];
+                return userVariant ? userVariant.variant : 'control';
+            }
+
+            // Track conversion event
+            trackConversion(eventType, data = {}) {
+                for (const [testName, test] of this.tests.entries()) {
+                    if (test.conversionEvents.includes(eventType) && this.isTestActive(testName)) {
+                        const variant = this.getVariant(testName);
+                        
+                        errorMonitor.trackUserAction('ab_test_conversion', {
+                            testName: testName,
+                            variant: variant,
+                            eventType: eventType,
+                            data: data,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                }
+            }
+
+            // Simple hash function for deterministic assignment
+            hashString(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash; // Convert to 32-bit integer
+                }
+                return Math.abs(hash);
+            }
+
+            // Initialize default A/B tests
+            initializeDefaultTests() {
+                // Test 1: Copy Button Styling
+                this.defineTest('copy_button_style', {
+                    description: 'Test different copy button designs for better conversion',
+                    variants: ['control', 'prominent', 'animated'],
+                    trafficAllocation: [0.4, 0.3, 0.3],
+                    conversionEvents: ['review_copied']
+                });
+
+                // Test 2: Feature Selection Layout
+                this.defineTest('feature_layout', {
+                    description: 'Test grid vs list layout for feature selection',
+                    variants: ['grid', 'list'],
+                    trafficAllocation: 0.5,
+                    conversionEvents: ['feature_selected', 'review_generated']
+                });
+
+                // Test 3: Review Preview Position
+                this.defineTest('preview_position', {
+                    description: 'Test preview position for better engagement',
+                    variants: ['bottom', 'right', 'modal'],
+                    trafficAllocation: [0.4, 0.3, 0.3],
+                    conversionEvents: ['review_generated', 'review_copied']
+                });
+
+                // Test 4: Character Counter Style
+                this.defineTest('character_counter', {
+                    description: 'Test different character counter presentations',
+                    variants: ['minimal', 'detailed', 'progress_bar'],
+                    trafficAllocation: [0.33, 0.33, 0.34],
+                    conversionEvents: ['review_generated']
+                });
+            }
+
+            // Apply variant-specific modifications to the interface
+            applyVariantModifications() {
+                // Copy Button Style Test
+                const copyButtonVariant = this.getVariant('copy_button_style');
+                this.applyCopyButtonVariant(copyButtonVariant);
+
+                // Feature Layout Test
+                const featureLayoutVariant = this.getVariant('feature_layout');
+                this.applyFeatureLayoutVariant(featureLayoutVariant);
+
+                // Preview Position Test
+                const previewPositionVariant = this.getVariant('preview_position');
+                this.applyPreviewPositionVariant(previewPositionVariant);
+
+                // Character Counter Test
+                const characterCounterVariant = this.getVariant('character_counter');
+                this.applyCharacterCounterVariant(characterCounterVariant);
+            }
+
+            // Apply copy button style variants
+            applyCopyButtonVariant(variant) {
+                const copyButton = elements.copyButton;
+                const stickyCopyButton = elements.stickyCopyButton;
+
+                switch (variant) {
+                    case 'prominent':
+                        [copyButton, stickyCopyButton].forEach(button => {
+                            if (button) {
+                                button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                                button.style.transform = 'scale(1.05)';
+                                button.style.boxShadow = '0 8px 25px rgba(16, 185, 129, 0.3)';
+                                button.style.fontSize = '1.1rem';
+                                button.style.fontWeight = '600';
+                            }
+                        });
+                        break;
+
+                    case 'animated':
+                        [copyButton, stickyCopyButton].forEach(button => {
+                            if (button) {
+                                button.style.background = '#3b82f6';
+                                button.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                                button.addEventListener('mouseenter', () => {
+                                    button.style.transform = 'translateY(-2px) scale(1.02)';
+                                    button.style.boxShadow = '0 12px 30px rgba(59, 130, 246, 0.4)';
+                                });
+                                button.addEventListener('mouseleave', () => {
+                                    button.style.transform = 'translateY(0) scale(1)';
+                                    button.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+                                });
+                            }
+                        });
+                        break;
+
+                    default: // control
+                        // Keep default styling
+                        break;
+                }
+            }
+
+            // Apply feature layout variants
+            applyFeatureLayoutVariant(variant) {
+                const featuresGrid = elements.featuresGrid;
+                
+                if (variant === 'list' && featuresGrid) {
+                    featuresGrid.style.display = 'flex';
+                    featuresGrid.style.flexDirection = 'column';
+                    featuresGrid.style.gap = '8px';
+                    
+                    // Modify feature items to list style
+                    const featureItems = featuresGrid.querySelectorAll('.feature-item');
+                    featureItems.forEach(item => {
+                        item.style.display = 'flex';
+                        item.style.alignItems = 'center';
+                        item.style.padding = '12px 16px';
+                        item.style.borderRadius = '8px';
+                        item.style.border = '2px solid #e2e8f0';
+                        item.style.backgroundColor = '#ffffff';
+                    });
+                }
+            }
+
+            // Apply preview position variants
+            applyPreviewPositionVariant(variant) {
+                const reviewPreview = elements.reviewPreview;
+                
+                switch (variant) {
+                    case 'right':
+                        if (reviewPreview && window.innerWidth > 768) {
+                            const container = reviewPreview.closest('.container') || document.querySelector('.container');
+                            if (container) {
+                                container.style.display = 'grid';
+                                container.style.gridTemplateColumns = '1fr 1fr';
+                                container.style.gap = '24px';
+                                reviewPreview.style.position = 'sticky';
+                                reviewPreview.style.top = '24px';
+                                reviewPreview.style.height = 'fit-content';
+                            }
+                        }
+                        break;
+
+                    case 'modal':
+                        if (reviewPreview) {
+                            reviewPreview.style.display = 'none'; // Hide default preview
+                            // Modal preview will be shown on demand
+                        }
+                        break;
+
+                    default: // bottom (control)
+                        // Keep default position
+                        break;
+                }
+            }
+
+            // Apply character counter variants
+            applyCharacterCounterVariant(variant) {
+                const charCounter = elements.charCounter;
+                
+                switch (variant) {
+                    case 'detailed':
+                        if (charCounter) {
+                            charCounter.style.fontSize = '0.9rem';
+                            charCounter.style.padding = '8px 12px';
+                            charCounter.style.backgroundColor = '#f8fafc';
+                            charCounter.style.borderRadius = '6px';
+                            charCounter.style.border = '1px solid #e2e8f0';
+                        }
+                        break;
+
+                    case 'progress_bar':
+                        if (charCounter) {
+                            const progressContainer = document.createElement('div');
+                            progressContainer.style.width = '100%';
+                            progressContainer.style.height = '4px';
+                            progressContainer.style.backgroundColor = '#e2e8f0';
+                            progressContainer.style.borderRadius = '2px';
+                            progressContainer.style.marginTop = '4px';
+                            
+                            const progressBar = document.createElement('div');
+                            progressBar.id = 'char-progress-bar';
+                            progressBar.style.height = '100%';
+                            progressBar.style.backgroundColor = '#3b82f6';
+                            progressBar.style.borderRadius = '2px';
+                            progressBar.style.transition = 'width 0.3s ease';
+                            progressBar.style.width = '0%';
+                            
+                            progressContainer.appendChild(progressBar);
+                            charCounter.appendChild(progressContainer);
+                        }
+                        break;
+
+                    default: // minimal (control)
+                        // Keep default styling
+                        break;
+                }
+            }
+
+            // Get test results summary
+            getTestResults() {
+                const results = {};
+                for (const [testName, test] of this.tests.entries()) {
+                    results[testName] = {
+                        variant: this.getVariant(testName),
+                        active: this.isTestActive(testName),
+                        description: test.description
+                    };
+                }
+                return results;
+            }
+        }
+
+        // Initialize A/B testing framework
+        const abTesting = new ABTestingFramework();
+
+        // Performance optimization: Async initialization
+        async function initializeAppAsync() {
+            try {
+                const initStart = performance.now();
+                
+                // Initialize critical components first
+                await initializeCriticalComponents();
+                
+                // Initialize non-critical components asynchronously
+                requestIdleCallback(() => {
+                    initializeEnhancements();
+                }, { timeout: 100 });
+                
+                const initEnd = performance.now();
+                console.log(`App initialized in ${initEnd - initStart}ms`);
+                
+            } catch (error) {
+                errorMonitor?.trackError('async_initialization_failed', error);
+                // Fallback to synchronous initialization
+                initializeApp();
+            }
+        }
+
+        async function initializeCriticalComponents() {
+            // DOM setup and essential functionality
+            setupDOMElements();
+            setupEventListeners();
+            processURLParameters();
+            updateReviewPreview();
+        }
+
+        function initializeEnhancements() {
+            // A/B testing, haptic feedback, advanced features
+            if (typeof abTesting !== 'undefined') {
+                setTimeout(() => {
+                    abTesting.applyVariantModifications();
+                }, 0);
+            }
+        }
+
+        // Start the application when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeAppAsync);
+        } else {
+            initializeAppAsync();
+        }
+
+        // PWA Service Worker Registration
+        async function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js', {
+                        scope: '/'
+                    });
+                    
+                    console.log('[PWA] Service Worker registered successfully:', registration.scope);
+                    
+                    errorMonitor.logInfo({
+                        type: 'service_worker_registered',
+                        scope: registration.scope,
+                        timestamp: new Date().toISOString()
+                    });
+
+                    // Handle service worker updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('[PWA] New service worker available');
+                                    
+                                    // Optionally show update notification to user
+                                    if (confirm('A new version of the app is available. Refresh to update?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    // Listen for messages from service worker
+                    navigator.serviceWorker.addEventListener('message', (event) => {
+                        console.log('[PWA] Message from service worker:', event.data);
+                        
+                        if (event.data.type === 'OFFLINE_FALLBACK') {
+                            // Handle offline state
+                            showOfflineNotification();
+                        }
+                    });
+
+                } catch (error) {
+                    console.log('[PWA] Service Worker registration failed:', error);
+                    errorMonitor.trackError('service_worker_registration_failed', error);
+                }
+            } else {
+                console.log('[PWA] Service Workers not supported');
+                errorMonitor.logWarning({
+                    type: 'service_worker_not_supported',
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }
+
+        // PWA Install Prompt
+        let deferredInstallPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            console.log('[PWA] Install prompt available');
+            
+            // Prevent the default mini-infobar from appearing
+            event.preventDefault();
+            
+            // Store the event for later use
+            deferredInstallPrompt = event;
+            
+            errorMonitor.trackUserAction('pwa_install_prompt_available');
+            
+            // Show custom install button/banner if desired
+            showPWAInstallOption();
+        });
+
+        // Handle successful PWA installation
+        window.addEventListener('appinstalled', (event) => {
+            console.log('[PWA] App was installed successfully');
+            
+            errorMonitor.trackUserAction('pwa_installed_successfully');
+            
+            // Hide install promotion
+            hidePWAInstallOption();
+            
+            // Clear the deferred prompt
+            deferredInstallPrompt = null;
+        });
+
+        // Function to show PWA install option
+        function showPWAInstallOption() {
+            // This could be enhanced with a custom install banner
+            // For now, we'll just log that it's available
+            console.log('[PWA] Install option available to user');
+        }
+
+        // Function to hide PWA install option
+        function hidePWAInstallOption() {
+            console.log('[PWA] Hiding install option');
+        }
+
+        // Function to trigger PWA install
+        async function installPWA() {
+            if (deferredInstallPrompt) {
+                try {
+                    // Show the install prompt
+                    deferredInstallPrompt.prompt();
+                    
+                    // Wait for the user's response
+                    const { outcome } = await deferredInstallPrompt.userChoice;
+                    
+                    console.log('[PWA] Install prompt outcome:', outcome);
+                    errorMonitor.trackUserAction('pwa_install_prompt_response', { outcome });
+                    
+                    // Clear the deferred prompt
+                    deferredInstallPrompt = null;
+                    
+                    return outcome === 'accepted';
+                } catch (error) {
+                    console.error('[PWA] Install prompt failed:', error);
+                    errorMonitor.trackError('pwa_install_prompt_failed', error);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // Function to show offline notification
+        function showOfflineNotification() {
+            // Could enhance with a toast notification
+            console.log('[PWA] App is running in offline mode');
+        }
+
+        // Offline/Online Status Detection
+        function handleOnlineStatus() {
+            if (navigator.onLine) {
+                console.log('[PWA] App is online');
+                errorMonitor.logInfo({
+                    type: 'connection_status',
+                    status: 'online',
+                    timestamp: new Date().toISOString()
+                });
+            } else {
+                console.log('[PWA] App is offline');
+                errorMonitor.logInfo({
+                    type: 'connection_status',
+                    status: 'offline',
+                    timestamp: new Date().toISOString()
+                });
+                showOfflineNotification();
+            }
+        }
+
+        // Listen for online/offline events
+        window.addEventListener('online', handleOnlineStatus);
+        window.addEventListener('offline', handleOnlineStatus);
+
+        // Register service worker when page loads
+        window.addEventListener('load', () => {
+            registerServiceWorker();
+            handleOnlineStatus();
+        });
+
+        // Handle visibility change to update review when user returns
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                updateReviewPreview();
+                
+                // Track user returning to app
+                errorMonitor.trackUserAction('app_visibility_visible');
+            } else {
+                errorMonitor.trackUserAction('app_visibility_hidden');
+            }
+        });
+
+        // Prevent zoom on input focus (iOS)
+        document.addEventListener('touchstart', () => {}, { passive: true });
+    </script>
+</body>
+</html>

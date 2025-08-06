@@ -39,5 +39,37 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
-# Local Netlify folder
+
+# Deployment folders
 .netlify
+.vercel
+
+# Security files
+*.key
+*.pem
+*.p12
+security.env
+
+# Sensitive configuration
+config/production.json
+config/secrets.json
+
+# Guest data (ensure no sensitive data is committed)
+data/guests/
+data/feedback/
+data/exports/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.vite/
+
+# Local development
+*.local
+.env.production
+.env.staging
+
+# Backup files
+*.bak
+*.backup
+*.old
