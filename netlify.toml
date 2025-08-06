@@ -1,24 +1,11 @@
 [build]
-  publish = "dist"
-  command = "npm run build"
+  publish = "."
+  # No build command needed for static site
 
 [build.environment]
   NODE_VERSION = "18"
-  NPM_FLAGS = "--production=false"
 
-# Production context
-[context.production]
-  command = "npm run build"
-
-[context.production.environment]
-  NODE_ENV = "production"
-
-# Staging/branch previews
-[context.branch-deploy]
-  command = "npm run build"
-
-[context.branch-deploy.environment]
-  NODE_ENV = "staging"
+# No build commands needed for static site
 
 # Headers for security and performance
 [[headers]]
