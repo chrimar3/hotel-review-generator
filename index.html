@@ -4,24 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="Help hotel guests create and submit reviews across multiple platforms">
-    <meta name="theme-color" content="#2563eb">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ReviewGen">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#3b82f6">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#3b82f6">
+    
     <title>Share Your Experience | Hotel Review Generator</title>
     
     <style>
         :root {
-            --primary-color: #2563eb;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-light: rgba(59, 130, 246, 0.1);
             --secondary-color: #64748b;
             --success-color: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
             --warning-color: #f59e0b;
             --error-color: #ef4444;
-            --background: #f8fafc;
+            --background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             --surface: #ffffff;
-            --text-dark: #1e293b;
+            --surface-elevated: #ffffff;
+            --text-dark: #0f172a;
+            --text-medium: #334155;
             --text-light: #64748b;
+            --text-lighter: #94a3b8;
             --border-light: #e2e8f0;
-            --border-radius: 8px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --border-medium: #cbd5e1;
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --border-radius-lg: 16px;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s ease;
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
         }
 
         * {
@@ -31,121 +69,242 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
             color: var(--text-dark);
             background: var(--background);
             min-height: 100vh;
-            padding-bottom: 100px; /* Space for sticky buttons */
+            padding-bottom: 120px;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 640px;
             margin: 0 auto;
-            padding: 16px;
+            padding: var(--spacing-md);
         }
 
         /* Header Section */
         .header {
             text-align: center;
-            margin-bottom: 24px;
-            padding: 24px 16px;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-2xl) var(--spacing-lg);
             background: var(--surface);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), #8b5cf6, #ec4899);
         }
 
         .logo-placeholder {
-            width: 80px;
-            height: 80px;
-            background: var(--primary-color);
+            width: 96px;
+            height: 96px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
             border-radius: 50%;
-            margin: 0 auto 16px;
+            margin: 0 auto var(--spacing-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
-            font-size: 24px;
+            font-weight: 700;
+            font-size: 32px;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .logo-placeholder::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6, #ec4899);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .logo-placeholder:hover::after {
+            opacity: 1;
         }
 
         .header h1 {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 32px;
+            font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 8px;
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, var(--text-dark), var(--primary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .header p {
-            color: var(--text-light);
-            font-size: 16px;
+            color: var(--text-medium);
+            font-size: 18px;
+            font-weight: 500;
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.5;
         }
 
         /* Form Sections */
         .section {
             background: var(--surface);
             border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: var(--shadow);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary-color), #8b5cf6);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .section:hover::before {
+            opacity: 1;
         }
 
         .section h2 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 16px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
             color: var(--text-dark);
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .section h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px var(--primary-light);
         }
 
         .section p {
             color: var(--text-light);
-            font-size: 14px;
-            margin-bottom: 16px;
+            font-size: 15px;
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.6;
+            font-weight: 450;
         }
 
         /* Feature Selection */
         .features-grid {
             display: grid;
-            gap: 12px;
+            gap: var(--spacing-sm);
         }
 
         .feature-item {
             display: flex;
             align-items: center;
-            padding: 12px;
-            background: var(--background);
+            padding: var(--spacing-md);
+            background: linear-gradient(135deg, var(--surface), #fafbfc);
             border-radius: var(--border-radius);
             border: 2px solid var(--border-light);
             cursor: pointer;
-            transition: all 0.2s ease;
-            min-height: 44px;
+            transition: var(--transition);
+            min-height: 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transition: left 0.5s;
         }
 
         .feature-item:hover {
             border-color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.05);
+            background: linear-gradient(135deg, var(--primary-light), rgba(59, 130, 246, 0.05));
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-item:hover::before {
+            left: 100%;
         }
 
         .feature-item.selected {
             border-color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.1);
+            background: linear-gradient(135deg, var(--primary-light), rgba(59, 130, 246, 0.08));
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-item.selected::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
         }
 
         .feature-item input[type="checkbox"] {
             appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-light);
-            border-radius: 4px;
-            margin-right: 12px;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-medium);
+            border-radius: var(--border-radius-sm);
+            margin-right: var(--spacing-md);
             position: relative;
             cursor: pointer;
             flex-shrink: 0;
+            transition: var(--transition);
+            background: var(--surface);
+        }
+
+        .feature-item input[type="checkbox"]:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
         }
 
         .feature-item input[type="checkbox"]:checked {
             background: var(--primary-color);
             border-color: var(--primary-color);
+            transform: scale(1.1);
         }
 
         .feature-item input[type="checkbox"]:checked::after {
@@ -155,85 +314,210 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 700;
+            animation: checkmark 0.3s ease;
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
         }
 
         .feature-item label {
             cursor: pointer;
             font-size: 16px;
             flex: 1;
-            line-height: 1.4;
+            line-height: 1.5;
+            font-weight: 500;
+            color: var(--text-medium);
+            transition: var(--transition);
+        }
+
+        .feature-item:hover label {
+            color: var(--text-dark);
+        }
+
+        .feature-item.selected label {
+            color: var(--text-dark);
+            font-weight: 600;
         }
 
         /* Staff Recognition */
         .staff-select {
             width: 100%;
-            padding: 12px;
+            padding: var(--spacing-md) var(--spacing-lg);
             font-size: 16px;
+            font-weight: 500;
             border: 2px solid var(--border-light);
             border-radius: var(--border-radius);
-            background: var(--surface);
+            background: linear-gradient(135deg, var(--surface), #fafbfc);
             color: var(--text-dark);
-            min-height: 44px;
+            min-height: 56px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .staff-select:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .staff-select:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 4px var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .staff-select option {
+            padding: var(--spacing-sm);
+            background: var(--surface);
+            color: var(--text-dark);
         }
 
         /* Personal Comments */
+        .comment-container {
+            position: relative;
+        }
+
         .comment-textarea {
             width: 100%;
-            min-height: 80px;
-            padding: 12px;
+            min-height: 120px;
+            padding: var(--spacing-lg);
             font-size: 16px;
             font-family: inherit;
+            font-weight: 450;
+            line-height: 1.6;
             border: 2px solid var(--border-light);
             border-radius: var(--border-radius);
-            background: var(--surface);
+            background: linear-gradient(135deg, var(--surface), #fafbfc);
             color: var(--text-dark);
             resize: vertical;
+            transition: var(--transition);
+        }
+
+        .comment-textarea:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .comment-textarea:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 4px var(--primary-light);
+            transform: translateY(-2px);
+            background: var(--surface);
+        }
+
+        .comment-textarea::placeholder {
+            color: var(--text-lighter);
+            font-style: italic;
         }
 
         .char-counter {
             text-align: right;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-light);
-            margin-top: 4px;
+            margin-top: var(--spacing-sm);
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .char-counter::before {
+            content: '💭';
+            font-size: 16px;
+            opacity: 0.6;
         }
 
         .char-counter.warning {
             color: var(--warning-color);
+            font-weight: 600;
+        }
+
+        .char-counter.warning::before {
+            content: '⚠️';
         }
 
         .char-counter.error {
             color: var(--error-color);
+            font-weight: 700;
+        }
+
+        .char-counter.error::before {
+            content: '❌';
         }
 
         /* Generated Review */
         .review-preview {
-            background: var(--background);
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
             border: 2px solid var(--border-light);
-            border-radius: var(--border-radius);
-            padding: 16px;
-            font-size: 16px;
-            line-height: 1.5;
-            min-height: 100px;
-            margin-bottom: 16px;
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            font-size: 17px;
+            line-height: 1.7;
+            min-height: 140px;
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .review-preview::before {
+            content: '“';
+            position: absolute;
+            top: var(--spacing-md);
+            left: var(--spacing-md);
+            font-size: 48px;
+            color: var(--primary-color);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        .review-preview::after {
+            content: '”';
+            position: absolute;
+            bottom: var(--spacing-md);
+            right: var(--spacing-md);
+            font-size: 48px;
+            color: var(--primary-color);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        .review-preview:not(.empty) {
+            background: linear-gradient(135deg, var(--surface), #fafbfc);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
+            font-weight: 500;
+            color: var(--text-dark);
         }
 
         .review-preview.empty {
-            color: var(--text-light);
+            color: var(--text-lighter);
             font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .review-preview.empty::before,
+        .review-preview.empty::after {
+            display: none;
         }
 
         /* Buttons */
@@ -241,30 +525,56 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 12px 20px;
+            padding: var(--spacing-md) var(--spacing-xl);
             font-size: 16px;
             font-weight: 600;
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
-            transition: all 0.2s ease;
-            min-height: 44px;
+            transition: var(--transition);
+            min-height: 56px;
             text-decoration: none;
             text-align: center;
             user-select: none;
             position: relative;
             overflow: hidden;
+            letter-spacing: 0.025em;
+            gap: var(--spacing-sm);
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .button:active::before {
+            width: 300px;
+            height: 300px;
         }
 
         .button-primary {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), #4f46e5);
             color: white;
+            box-shadow: var(--shadow-md);
         }
 
         .button-primary:hover {
-            background: #1d4ed8;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-hover), #4338ca);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .button-primary:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-md);
         }
 
         .button-secondary {
@@ -279,8 +589,15 @@
         }
 
         .button-success {
-            background: var(--success-color);
+            background: linear-gradient(135deg, var(--success-color), #059669);
             color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .button-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
         }
 
         .button:disabled {
@@ -296,20 +613,39 @@
 
         /* Success Feedback */
         .success-message {
-            background: var(--success-color);
+            background: linear-gradient(135deg, var(--success-color), #059669);
             color: white;
-            padding: 12px;
-            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
             text-align: center;
-            margin-bottom: 16px;
-            transform: translateY(-10px);
+            margin-bottom: var(--spacing-lg);
+            transform: translateY(-20px) scale(0.95);
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.8s;
         }
 
         .success-message.show {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
             opacity: 1;
+        }
+
+        .success-message.show::before {
+            left: 100%;
         }
 
         /* Platform Selection */
@@ -341,11 +677,25 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--surface);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), var(--surface));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid var(--border-light);
-            padding: 16px;
-            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-xl);
             z-index: 100;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .sticky-actions .container {
@@ -440,8 +790,8 @@
         <main>
             <!-- Feature Selection -->
             <section class="section">
-                <h2>What did you enjoy most?</h2>
-                <p>Select all that apply to help create your personalized review</p>
+                <h2>What made your stay special? ✨</h2>
+                <p>Tell us about the highlights of your experience. The more you select, the more personalized your review will be!</p>
                 <div class="features-grid" id="featuresGrid">
                     <div class="feature-item" tabindex="0">
                         <input type="checkbox" id="service" value="excellent customer service">
@@ -472,8 +822,8 @@
 
             <!-- Staff Recognition -->
             <section class="section">
-                <h2>Staff Recognition</h2>
-                <p>Any staff member who made your stay special?</p>
+                <h2>Recognize Outstanding Service 🎆</h2>
+                <p>Did someone on our team go above and beyond to make your stay memorable?</p>
                 <select class="staff-select" id="staffSelect" aria-label="Select a staff member to recognize">
                     <option value="">Prefer not to mention</option>
                     <option value="Sarah">Sarah</option>
@@ -489,21 +839,26 @@
 
             <!-- Personal Comments -->
             <section class="section">
-                <h2>Personal Touch</h2>
-                <p>Add your own thoughts (optional)</p>
-                <textarea 
-                    class="comment-textarea" 
-                    id="personalComments"
-                    placeholder="Share any specific details about your experience..."
-                    maxlength="200"
-                    aria-describedby="charCounter"
-                ></textarea>
-                <div class="char-counter" id="charCounter">0/200 characters</div>
+                <h2>Your Personal Story 📝</h2>
+                <p>Add your own thoughts to make your review unique and authentic</p>
+                <div class="comment-container">
+                    <textarea 
+                        class="comment-textarea" 
+                        id="personalComments"
+                        placeholder="Share any specific details about your experience... What made your stay memorable?"
+                        maxlength="200"
+                        aria-describedby="charCounter"
+                    ></textarea>
+                    <div class="char-counter" id="charCounter">
+                        <span></span>
+                        <span>0/200 characters</span>
+                    </div>
+                </div>
             </section>
 
             <!-- Generated Review Preview -->
             <section class="section">
-                <h2>Your Review Preview</h2>
+                <h2>Your Personalized Review 🌟</h2>
                 <div class="review-preview empty" id="reviewPreview">
                     Select features above to generate your personalized review
                 </div>
@@ -517,7 +872,7 @@
 
             <!-- Platform Selection -->
             <section class="section">
-                <h2>Where would you like to leave your review?</h2>
+                <h2>Share Your Experience 🌍</h2>
                 <div class="platform-buttons" id="platformButtons">
                     <!-- Dynamically populated based on source parameter -->
                 </div>
@@ -538,6 +893,193 @@
     </div>
 
     <script>
+        // Error Monitoring and Logging System
+        class ErrorMonitor {
+            constructor() {
+                this.enabled = true;
+                this.apiEndpoint = null; // Can be configured for external monitoring
+                this.errorQueue = [];
+                this.userAgent = navigator.userAgent;
+                this.sessionId = this.generateSessionId();
+                this.setupGlobalErrorHandlers();
+                this.setupPerformanceMonitoring();
+            }
+
+            generateSessionId() {
+                return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            setupGlobalErrorHandlers() {
+                // Capture JavaScript errors
+                window.addEventListener('error', (event) => {
+                    this.logError({
+                        type: 'javascript_error',
+                        message: event.message,
+                        filename: event.filename,
+                        lineno: event.lineno,
+                        colno: event.colno,
+                        stack: event.error ? event.error.stack : null,
+                        timestamp: new Date().toISOString(),
+                        userAgent: this.userAgent,
+                        sessionId: this.sessionId
+                    });
+                });
+
+                // Capture unhandled promise rejections
+                window.addEventListener('unhandledrejection', (event) => {
+                    this.logError({
+                        type: 'unhandled_promise_rejection',
+                        message: event.reason ? event.reason.toString() : 'Unknown promise rejection',
+                        stack: event.reason && event.reason.stack ? event.reason.stack : null,
+                        timestamp: new Date().toISOString(),
+                        userAgent: this.userAgent,
+                        sessionId: this.sessionId
+                    });
+                });
+
+                // Capture resource loading errors
+                window.addEventListener('error', (event) => {
+                    if (event.target !== window) {
+                        this.logError({
+                            type: 'resource_error',
+                            message: `Failed to load resource: ${event.target.src || event.target.href || 'unknown'}`,
+                            element: event.target.tagName,
+                            timestamp: new Date().toISOString(),
+                            userAgent: this.userAgent,
+                            sessionId: this.sessionId
+                        });
+                    }
+                }, true);
+            }
+
+            setupPerformanceMonitoring() {
+                // Monitor page load performance
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        const perfData = performance.getEntriesByType('navigation')[0];
+                        if (perfData) {
+                            this.logInfo({
+                                type: 'performance_metrics',
+                                loadTime: perfData.loadEventEnd - perfData.navigationStart,
+                                domContentLoaded: perfData.domContentLoadedEventEnd - perfData.navigationStart,
+                                firstContentfulPaint: this.getFirstContentfulPaint(),
+                                timestamp: new Date().toISOString(),
+                                sessionId: this.sessionId
+                            });
+                        }
+                    }, 0);
+                });
+            }
+
+            getFirstContentfulPaint() {
+                const paintEntries = performance.getEntriesByType('paint');
+                const fcp = paintEntries.find(entry => entry.name === 'first-contentful-paint');
+                return fcp ? fcp.startTime : null;
+            }
+
+            logError(errorData) {
+                if (!this.enabled) return;
+
+                console.error('[HotelReviewApp] Error:', errorData);
+                this.errorQueue.push(errorData);
+
+                // Keep only last 50 errors to prevent memory issues
+                if (this.errorQueue.length > 50) {
+                    this.errorQueue.shift();
+                }
+
+                // Send to external monitoring service if configured
+                if (this.apiEndpoint) {
+                    this.sendToMonitoring(errorData);
+                }
+
+                // Store in localStorage for debugging
+                this.storeLocalError(errorData);
+            }
+
+            logInfo(infoData) {
+                if (!this.enabled) return;
+                console.info('[HotelReviewApp] Info:', infoData);
+            }
+
+            logWarning(warningData) {
+                if (!this.enabled) return;
+                console.warn('[HotelReviewApp] Warning:', warningData);
+            }
+
+            async sendToMonitoring(data) {
+                try {
+                    await fetch(this.apiEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                } catch (error) {
+                    // Silent fail for monitoring endpoint
+                    console.debug('Failed to send error to monitoring service:', error);
+                }
+            }
+
+            storeLocalError(errorData) {
+                try {
+                    const errors = JSON.parse(localStorage.getItem('hotelReviewApp_errors') || '[]');
+                    errors.push(errorData);
+                    
+                    // Keep only last 20 errors locally
+                    if (errors.length > 20) {
+                        errors.shift();
+                    }
+                    
+                    localStorage.setItem('hotelReviewApp_errors', JSON.stringify(errors));
+                } catch (error) {
+                    // Ignore localStorage errors
+                }
+            }
+
+            getStoredErrors() {
+                try {
+                    return JSON.parse(localStorage.getItem('hotelReviewApp_errors') || '[]');
+                } catch (error) {
+                    return [];
+                }
+            }
+
+            clearStoredErrors() {
+                try {
+                    localStorage.removeItem('hotelReviewApp_errors');
+                } catch (error) {
+                    // Ignore localStorage errors
+                }
+            }
+
+            trackUserAction(action, data = {}) {
+                this.logInfo({
+                    type: 'user_action',
+                    action: action,
+                    data: data,
+                    timestamp: new Date().toISOString(),
+                    sessionId: this.sessionId
+                });
+            }
+
+            trackError(context, error) {
+                this.logError({
+                    type: 'application_error',
+                    context: context,
+                    message: error.message,
+                    stack: error.stack,
+                    timestamp: new Date().toISOString(),
+                    userAgent: this.userAgent,
+                    sessionId: this.sessionId
+                });
+            }
+        }
+
+        // Initialize error monitoring
+        const errorMonitor = new ErrorMonitor();
+
         // Configuration and State
         const config = {
             hotelName: 'our hotel',
@@ -681,18 +1223,26 @@
 
         function updateCharCounter() {
             const length = state.personalComments.length;
-            elements.charCounter.textContent = `${length}/${config.maxCommentLength} characters`;
+            const counterElement = elements.charCounter.querySelector('span:last-child');
+            counterElement.textContent = `${length}/${config.maxCommentLength} characters`;
+            
+            // Remove all classes first
+            elements.charCounter.classList.remove('warning', 'error');
             
             if (length > config.maxCommentLength * 0.9) {
                 elements.charCounter.classList.add('warning');
-            } else {
-                elements.charCounter.classList.remove('warning');
             }
             
             if (length >= config.maxCommentLength) {
                 elements.charCounter.classList.add('error');
-            } else {
-                elements.charCounter.classList.remove('error');
+            }
+            
+            // Add a subtle pulse animation when typing
+            if (length > 0) {
+                elements.charCounter.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    elements.charCounter.style.transform = 'scale(1)';
+                }, 150);
             }
         }
 
@@ -705,12 +1255,37 @@
 
         // Clipboard Operations
         async function copyToClipboard() {
-            if (!state.generatedReview) return false;
+            if (!state.generatedReview) {
+                errorMonitor.logWarning({
+                    type: 'clipboard_warning',
+                    message: 'Attempted to copy empty review',
+                    timestamp: new Date().toISOString()
+                });
+                return false;
+            }
 
             try {
+                errorMonitor.trackUserAction('clipboard_copy_attempt', {
+                    reviewLength: state.generatedReview.length,
+                    method: 'clipboard_api'
+                });
+
                 await navigator.clipboard.writeText(state.generatedReview);
+                
+                errorMonitor.trackUserAction('clipboard_copy_success', {
+                    reviewLength: state.generatedReview.length,
+                    method: 'clipboard_api'
+                });
+                
                 return true;
             } catch (err) {
+                errorMonitor.logWarning({
+                    type: 'clipboard_api_fallback',
+                    message: 'Clipboard API failed, using fallback',
+                    error: err.message,
+                    timestamp: new Date().toISOString()
+                });
+
                 // Fallback for older browsers
                 const textArea = document.createElement('textarea');
                 textArea.value = state.generatedReview;
@@ -722,11 +1297,22 @@
                 textArea.select();
                 
                 try {
-                    document.execCommand('copy');
+                    const result = document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    return true;
-                } catch (err) {
+                    
+                    if (result) {
+                        errorMonitor.trackUserAction('clipboard_copy_success', {
+                            reviewLength: state.generatedReview.length,
+                            method: 'execCommand'
+                        });
+                    } else {
+                        errorMonitor.trackError('clipboard_fallback_failed', new Error('execCommand returned false'));
+                    }
+                    
+                    return result;
+                } catch (fallbackErr) {
                     document.body.removeChild(textArea);
+                    errorMonitor.trackError('clipboard_complete_failure', fallbackErr);
                     return false;
                 }
             }
@@ -802,15 +1388,27 @@
         function handleFeatureChange(checkbox) {
             const value = checkbox.value;
             const isChecked = checkbox.checked;
+            const featureItem = checkbox.parentElement;
 
             if (isChecked) {
                 if (!state.selectedFeatures.includes(value)) {
                     state.selectedFeatures.push(value);
                 }
-                checkbox.parentElement.classList.add('selected');
+                featureItem.classList.add('selected');
+                
+                // Add celebratory micro-interaction
+                featureItem.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    featureItem.style.transform = '';
+                }, 200);
             } else {
                 state.selectedFeatures = state.selectedFeatures.filter(f => f !== value);
-                checkbox.parentElement.classList.remove('selected');
+                featureItem.classList.remove('selected');
+            }
+
+            // Add haptic feedback on mobile
+            if (navigator.vibrate) {
+                navigator.vibrate(10);
             }
 
             updateReviewPreview();
@@ -866,46 +1464,118 @@
 
         // Initialize Application
         function initializeApp() {
-            // Detect platform and setup
-            detectPlatform();
-
-            // Feature selection event listeners
-            elements.featuresGrid.addEventListener('click', (e) => {
-                const featureItem = e.target.closest('.feature-item');
-                if (featureItem) {
-                    const checkbox = featureItem.querySelector('input[type="checkbox"]');
-                    if (e.target !== checkbox) {
-                        checkbox.checked = !checkbox.checked;
+            try {
+                const initStart = performance.now();
+                
+                errorMonitor.logInfo({
+                    type: 'app_initialization_start',
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    viewport: {
+                        width: window.innerWidth,
+                        height: window.innerHeight
                     }
-                    handleFeatureChange(checkbox);
-                }
-            });
+                });
 
-            elements.featuresGrid.addEventListener('keydown', (e) => {
-                const featureItem = e.target.closest('.feature-item');
-                if (featureItem) {
-                    const checkbox = featureItem.querySelector('input[type="checkbox"]');
-                    handleFeatureKeyPress(e, checkbox);
-                }
-            });
+                // Detect platform and setup
+                detectPlatform();
 
-            // Staff selection
-            elements.staffSelect.addEventListener('change', handleStaffChange);
+                // Feature selection event listeners with error handling
+                elements.featuresGrid.addEventListener('click', (e) => {
+                    try {
+                        const featureItem = e.target.closest('.feature-item');
+                        if (featureItem) {
+                            const checkbox = featureItem.querySelector('input[type="checkbox"]');
+                            if (e.target !== checkbox) {
+                                checkbox.checked = !checkbox.checked;
+                            }
+                            handleFeatureChange(checkbox);
+                        }
+                    } catch (error) {
+                        errorMonitor.trackError('feature_selection_click', error);
+                    }
+                });
 
-            // Personal comments
-            elements.personalComments.addEventListener('input', handleCommentsChange);
+                elements.featuresGrid.addEventListener('keydown', (e) => {
+                    try {
+                        const featureItem = e.target.closest('.feature-item');
+                        if (featureItem) {
+                            const checkbox = featureItem.querySelector('input[type="checkbox"]');
+                            handleFeatureKeyPress(e, checkbox);
+                        }
+                    } catch (error) {
+                        errorMonitor.trackError('feature_selection_keydown', error);
+                    }
+                });
 
-            // Copy buttons
-            elements.copyButton.addEventListener('click', handleCopyClick);
-            elements.stickyCopyButton.addEventListener('click', handleCopyClick);
+                // Staff selection with error handling
+                elements.staffSelect.addEventListener('change', (e) => {
+                    try {
+                        handleStaffChange(e);
+                    } catch (error) {
+                        errorMonitor.trackError('staff_selection', error);
+                    }
+                });
 
-            // Initialize character counter
-            updateCharCounter();
-            
-            // Initial review update
-            updateReviewPreview();
+                // Personal comments with error handling
+                elements.personalComments.addEventListener('input', (e) => {
+                    try {
+                        handleCommentsChange(e);
+                    } catch (error) {
+                        errorMonitor.trackError('comments_input', error);
+                    }
+                });
 
-            console.log('Hotel Review Generator initialized successfully');
+                // Copy buttons with error handling
+                elements.copyButton.addEventListener('click', (e) => {
+                    try {
+                        handleCopyClick(e);
+                    } catch (error) {
+                        errorMonitor.trackError('copy_button_click', error);
+                    }
+                });
+                
+                elements.stickyCopyButton.addEventListener('click', (e) => {
+                    try {
+                        handleCopyClick(e);
+                    } catch (error) {
+                        errorMonitor.trackError('sticky_copy_button_click', error);
+                    }
+                });
+
+                // Initialize character counter
+                updateCharCounter();
+                
+                // Initial review update
+                updateReviewPreview();
+
+                const initEnd = performance.now();
+                const initTime = initEnd - initStart;
+
+                errorMonitor.logInfo({
+                    type: 'app_initialization_complete',
+                    timestamp: new Date().toISOString(),
+                    initTime: initTime,
+                    elementsFound: Object.keys(elements).length
+                });
+
+                console.log('Hotel Review Generator initialized successfully in', initTime.toFixed(2), 'ms');
+                
+            } catch (error) {
+                errorMonitor.trackError('app_initialization_failed', error);
+                console.error('Failed to initialize Hotel Review Generator:', error);
+                
+                // Show user-friendly error message
+                document.body.innerHTML = `
+                    <div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">
+                        <h2>Oops! Something went wrong</h2>
+                        <p>We're having trouble loading the review generator. Please refresh the page to try again.</p>
+                        <button onclick="location.reload()" style="background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">
+                            Refresh Page
+                        </button>
+                    </div>
+                `;
+            }
         }
 
         // Start the application when DOM is loaded
@@ -915,10 +1585,177 @@
             initializeApp();
         }
 
+        // PWA Service Worker Registration
+        async function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js', {
+                        scope: '/'
+                    });
+                    
+                    console.log('[PWA] Service Worker registered successfully:', registration.scope);
+                    
+                    errorMonitor.logInfo({
+                        type: 'service_worker_registered',
+                        scope: registration.scope,
+                        timestamp: new Date().toISOString()
+                    });
+
+                    // Handle service worker updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('[PWA] New service worker available');
+                                    
+                                    // Optionally show update notification to user
+                                    if (confirm('A new version of the app is available. Refresh to update?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    // Listen for messages from service worker
+                    navigator.serviceWorker.addEventListener('message', (event) => {
+                        console.log('[PWA] Message from service worker:', event.data);
+                        
+                        if (event.data.type === 'OFFLINE_FALLBACK') {
+                            // Handle offline state
+                            showOfflineNotification();
+                        }
+                    });
+
+                } catch (error) {
+                    console.log('[PWA] Service Worker registration failed:', error);
+                    errorMonitor.trackError('service_worker_registration_failed', error);
+                }
+            } else {
+                console.log('[PWA] Service Workers not supported');
+                errorMonitor.logWarning({
+                    type: 'service_worker_not_supported',
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }
+
+        // PWA Install Prompt
+        let deferredInstallPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            console.log('[PWA] Install prompt available');
+            
+            // Prevent the default mini-infobar from appearing
+            event.preventDefault();
+            
+            // Store the event for later use
+            deferredInstallPrompt = event;
+            
+            errorMonitor.trackUserAction('pwa_install_prompt_available');
+            
+            // Show custom install button/banner if desired
+            showPWAInstallOption();
+        });
+
+        // Handle successful PWA installation
+        window.addEventListener('appinstalled', (event) => {
+            console.log('[PWA] App was installed successfully');
+            
+            errorMonitor.trackUserAction('pwa_installed_successfully');
+            
+            // Hide install promotion
+            hidePWAInstallOption();
+            
+            // Clear the deferred prompt
+            deferredInstallPrompt = null;
+        });
+
+        // Function to show PWA install option
+        function showPWAInstallOption() {
+            // This could be enhanced with a custom install banner
+            // For now, we'll just log that it's available
+            console.log('[PWA] Install option available to user');
+        }
+
+        // Function to hide PWA install option
+        function hidePWAInstallOption() {
+            console.log('[PWA] Hiding install option');
+        }
+
+        // Function to trigger PWA install
+        async function installPWA() {
+            if (deferredInstallPrompt) {
+                try {
+                    // Show the install prompt
+                    deferredInstallPrompt.prompt();
+                    
+                    // Wait for the user's response
+                    const { outcome } = await deferredInstallPrompt.userChoice;
+                    
+                    console.log('[PWA] Install prompt outcome:', outcome);
+                    errorMonitor.trackUserAction('pwa_install_prompt_response', { outcome });
+                    
+                    // Clear the deferred prompt
+                    deferredInstallPrompt = null;
+                    
+                    return outcome === 'accepted';
+                } catch (error) {
+                    console.error('[PWA] Install prompt failed:', error);
+                    errorMonitor.trackError('pwa_install_prompt_failed', error);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // Function to show offline notification
+        function showOfflineNotification() {
+            // Could enhance with a toast notification
+            console.log('[PWA] App is running in offline mode');
+        }
+
+        // Offline/Online Status Detection
+        function handleOnlineStatus() {
+            if (navigator.onLine) {
+                console.log('[PWA] App is online');
+                errorMonitor.logInfo({
+                    type: 'connection_status',
+                    status: 'online',
+                    timestamp: new Date().toISOString()
+                });
+            } else {
+                console.log('[PWA] App is offline');
+                errorMonitor.logInfo({
+                    type: 'connection_status',
+                    status: 'offline',
+                    timestamp: new Date().toISOString()
+                });
+                showOfflineNotification();
+            }
+        }
+
+        // Listen for online/offline events
+        window.addEventListener('online', handleOnlineStatus);
+        window.addEventListener('offline', handleOnlineStatus);
+
+        // Register service worker when page loads
+        window.addEventListener('load', () => {
+            registerServiceWorker();
+            handleOnlineStatus();
+        });
+
         // Handle visibility change to update review when user returns
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
                 updateReviewPreview();
+                
+                // Track user returning to app
+                errorMonitor.trackUserAction('app_visibility_visible');
+            } else {
+                errorMonitor.trackUserAction('app_visibility_hidden');
             }
         });
 
