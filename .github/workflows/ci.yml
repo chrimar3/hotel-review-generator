@@ -1,0 +1,259 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Quality assurance job
+  quality:
+    runs-on: ubuntu-latest
+    name: Code Quality & Testing
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Lint code
+        run: npm run lint
+        
+      - name: Run tests with coverage
+        run: npm run test:coverage
+        
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          
+  # Security audit
+  security:
+    runs-on: ubuntu-latest
+    name: Security Audit
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run security audit
+        run: npm audit --audit-level moderate
+        
+      - name: Check for vulnerabilities
+        run: npx audit-ci --moderate
+        
+  # Build and performance testing
+  build:
+    runs-on: ubuntu-latest
+    name: Build & Performance
+    needs: [quality, security]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Start preview server
+        run: npm run preview &
+        
+      - name: Wait for server
+        run: npx wait-on http://localhost:3000
+        
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.12.x
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          
+      - name: Accessibility testing
+        run: npm run a11y
+        
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: dist/
+          retention-days: 30
+          
+  # Cross-browser testing
+  browser-tests:
+    runs-on: ubuntu-latest
+    name: Cross-Browser Testing
+    needs: [build]
+    
+    strategy:
+      matrix:
+        browser: [chrome, firefox, safari]
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+          path: dist/
+          
+      - name: Setup browser testing
+        run: |
+          npm install -g serve playwright
+          npx playwright install ${{ matrix.browser }}
+          
+      - name: Start server
+        run: serve -s dist -p 3000 &
+        
+      - name: Run browser tests
+        run: npx playwright test --browser=${{ matrix.browser }}
+        
+  # Deployment to staging
+  deploy-staging:
+    runs-on: ubuntu-latest
+    name: Deploy to Staging
+    needs: [build, browser-tests]
+    if: github.ref == 'refs/heads/develop'
+    
+    environment:
+      name: staging
+      url: https://staging.hotel-review-generator.com
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+          path: dist/
+          
+      - name: Deploy to Netlify (Staging)
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=dist --site=${{ secrets.NETLIFY_STAGING_SITE_ID }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          
+      - name: Run staging smoke tests
+        run: |
+          npm install -g newman
+          newman run tests/postman/smoke-tests.json \
+            --environment tests/postman/staging.env.json
+            
+  # Deployment to production
+  deploy-production:
+    runs-on: ubuntu-latest
+    name: Deploy to Production
+    needs: [build, browser-tests]
+    if: github.ref == 'refs/heads/main'
+    
+    environment:
+      name: production
+      url: https://hotel-review-generator.com
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+          path: dist/
+          
+      - name: Deploy to Netlify (Production)
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --prod --dir=dist --site=${{ secrets.NETLIFY_SITE_ID }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            Automated release from commit ${{ github.sha }}
+            
+            ## Changes
+            ${{ github.event.head_commit.message }}
+            
+            ## Deployment
+            - 🚀 Production: https://hotel-review-generator.com
+            - 📊 Lighthouse Score: Available in artifacts
+            - 🧪 All tests passed
+          draft: false
+          prerelease: false
+          
+      - name: Notify team
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: '🚀 Hotel Review Generator deployed to production!'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+
+  # Performance monitoring
+  performance-monitoring:
+    runs-on: ubuntu-latest
+    name: Performance Monitoring
+    needs: [deploy-production]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Monitor production performance
+        run: |
+          npm install -g lighthouse
+          lighthouse https://hotel-review-generator.com \
+            --output=json \
+            --output-path=./lighthouse-results.json \
+            --chrome-flags="--headless --no-sandbox"
+            
+      - name: Check performance thresholds
+        run: |
+          node scripts/check-performance-thresholds.js
+          
+      - name: Upload performance data
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse-results
+          path: lighthouse-results.json
