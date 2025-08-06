@@ -1,13 +1,15 @@
 # 🏨 Hotel Review Generator
 
-**Production-ready Progressive Web Application for multi-platform hotel review generation**
+**Enterprise-grade Progressive Web Application for multi-platform hotel review generation**
 
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-success?style=for-the-badge&logo=pwa)](./manifest.json)
 [![Tests Passing](https://img.shields.io/badge/Tests-35%2F35%20Passing-brightgreen?style=for-the-badge&logo=jest)](./tests/)
 [![Mobile First](https://img.shields.io/badge/Mobile-First%20Design-blue?style=for-the-badge&logo=mobile)](./index.html)
 [![Zero Dependencies](https://img.shields.io/badge/Runtime-Zero%20Dependencies-orange?style=for-the-badge&logo=javascript)](./package.json)
+[![Security](https://img.shields.io/badge/Security-Enterprise%20Grade-red?style=for-the-badge&logo=security)](./SECURITY.md)
+[![A/B Testing](https://img.shields.io/badge/A%2FB%20Testing-Active-purple?style=for-the-badge&logo=experiment)](./docs/)
 
-> **Phase 1 Complete** ✅ Foundation Enhancement with comprehensive error monitoring, PWA implementation, and premium UI/UX
+> **Phases 1 & 2 Complete** ✅ Enterprise foundation with comprehensive A/B testing framework and conversion optimization
 
 ## 🎯 Project Overview
 
@@ -51,23 +53,41 @@ Enterprise-grade Progressive Web Application that streamlines hotel review creat
 
 ## 🚀 Quick Start
 
-### Instant Deployment
+### For Developers
 ```bash
-# Clone and serve
-git clone <repository-url>
+# Clone repository
+git clone https://github.com/chrimar3/hotel-review-generator.git
 cd hotel-review-generator
-python -m http.server 8000  # or any static file server
+
+# Install dependencies
+npm install
+# or
+make install
+
+# Start development server
+npm run dev
+# or
+make dev
 ```
 
-### Direct Usage
-1. Open `index.html` in any modern browser
-2. Customize hotel name with URL parameter: `?hotel=Grand-Hotel`
-3. Set booking source: `?source=booking` (booking/expedia/direct)
-4. Share the link with hotel guests via email or SMS
+Visit `http://localhost:3000` to see the application.
 
-### URL Parameters
-```
-https://yourdomain.com/index.html?hotel=Grand-Hotel&source=booking
+### For Hotels (Direct Usage)
+1. Download the latest release
+2. Upload `index.html` to your web server
+3. Customize with URL parameters:
+   ```
+   https://yourdomain.com/index.html?hotel=Grand-Hotel&source=booking
+   ```
+4. Share the link with guests via email or SMS
+
+### Docker Deployment
+```bash
+# Production deployment
+docker-compose up -d
+
+# Development with hot reload
+make docker-dev
 ```
 
 ## 🏗️ Architecture & Design Patterns
@@ -337,35 +357,40 @@ npm run dev
 npm run lint
 ```
 
-## 🚀 Getting Started
+## 📋 Development Guide
 
-### Development Setup
+### Quick Commands (Make)
 ```bash
-# Clone repository
-git clone https://github.com/your-org/hotel-review-generator.git
-cd hotel-review-generator
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Run tests
-npm test
+make help          # Show all available commands
+make dev           # Start development server
+make test          # Run test suite
+make validate      # Run all quality checks
+make build         # Build for production
+make deploy        # Deploy to production
 ```
 
-### Production Deployment
+### Development Workflow
 ```bash
-# Build for production
-npm run build
+# Daily development
+make dev           # Start development
+make test-watch    # Run tests in watch mode
+make commit        # Prepare code for commit
 
-# Deploy to Netlify
-npm run deploy:netlify
+# Quality assurance
+make lint          # Check code quality
+make format        # Format code
+make validate      # Complete validation
 
-# Or deploy to Vercel
-npm run deploy:vercel
+# Performance
+make lighthouse    # Run performance audit
+make a11y          # Run accessibility tests
 ```
+
+### Documentation
+- **[Setup Guide](docs/development/SETUP.md)** - Development environment setup
+- **[Testing Guide](docs/development/TESTING.md)** - Comprehensive testing documentation
+- **[Contributing Guide](CONTRIBUTING.md)** - Contribution guidelines
+- **[Architecture Guide](docs/ARCHITECTURE.md)** - Technical architecture details
 
 ## 📊 Technical Achievements
 
@@ -384,19 +409,31 @@ npm run deploy:vercel
 
 ## 🤝 Contributing
 
-### Code Standards
-- **ESLint**: JavaScript linting with standard configuration
-- **Prettier**: Code formatting consistency
-- **Jest**: Unit testing framework
-- **Conventional Commits**: Structured commit messages
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-### Pull Request Process
-1. Create feature branch from `main`
-2. Implement changes with comprehensive tests
-3. Run `npm run validate` (lint + test + build)
-4. Submit PR with detailed description
-5. Address code review feedback
-6. Merge after approval and CI passing
+### Quick Contribution Setup
+```bash
+# Fork and clone
+git clone https://github.com/YOUR_USERNAME/hotel-review-generator.git
+cd hotel-review-generator
+
+# Setup development environment
+make install
+make git-setup
+
+# Create feature branch
+git checkout -b feature/your-feature-name
+
+# Make changes, test, and commit
+make validate
+git commit -m "feat: your feature description"
+```
+
+### Community Guidelines
+- Read our [Code of Conduct](CODE_OF_CONDUCT.md)
+- Follow [Security Policy](SECURITY.md) for security issues
+- Use [Issue Templates](.github/ISSUE_TEMPLATE/) for bug reports
+- Check [Pull Request Template](.github/PULL_REQUEST_TEMPLATE.md) for PRs
 
 ## 📄 License
 

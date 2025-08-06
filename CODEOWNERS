@@ -1,0 +1,86 @@
+# Code Owners
+# 
+# This file defines who is responsible for reviewing changes to specific
+# parts of the codebase. Code owners are automatically requested for review
+# when someone opens a pull request that modifies code they own.
+#
+# Order is important; the last matching pattern takes the most precedence.
+# When someone opens a pull request that only modifies files in a 
+# particular directory, only the code owners for that directory will be 
+# requested for review.
+
+# Global Owners
+# These owners will be requested for all changes unless a more specific rule applies
+* @chrimar3
+
+# Core Application
+index.html @chrimar3
+src/ @chrimar3
+
+# Configuration and Build System
+package.json @chrimar3
+vite.config.js @chrimar3
+jest.config.js @chrimar3
+.eslintrc.* @chrimar3
+.prettierrc @chrimar3
+
+# Testing Infrastructure
+tests/ @chrimar3
+/tests/functionality.test.js @chrimar3
+/tests/setup.js @chrimar3
+
+# Documentation (Requires documentation team approval for major changes)
+docs/ @chrimar3
+README.md @chrimar3
+CHANGELOG.md @chrimar3
+CONTRIBUTING.md @chrimar3
+
+# Security and Compliance (Requires security team approval)
+SECURITY.md @chrimar3
+.github/workflows/security-scan.yml @chrimar3
+.github/dependabot.yml @chrimar3
+
+# CI/CD and DevOps
+.github/workflows/ @chrimar3
+docker/ @chrimar3
+Dockerfile @chrimar3
+docker-compose.yml @chrimar3
+scripts/ @chrimar3
+
+# Deployment and Infrastructure
+netlify.toml @chrimar3
+_redirects @chrimar3
+manifest.json @chrimar3
+sw.js @chrimar3
+
+# Monitoring and Analytics
+monitoring/ @chrimar3
+config/monitoring/ @chrimar3
+
+# Dependencies and Package Management
+package-lock.json @chrimar3
+yarn.lock @chrimar3
+
+# Environment Configuration
+config/ @chrimar3
+.env* @chrimar3
+
+# VS Code and Development Environment
+.vscode/ @chrimar3
+.devcontainer/ @chrimar3
+
+# Git Configuration
+.gitignore @chrimar3
+.gitattributes @chrimar3
+
+# License and Legal
+LICENSE @chrimar3
+CODE_OF_CONDUCT.md @chrimar3
+
+# Release Management
+CHANGELOG.md @chrimar3
+.github/workflows/release.yml @chrimar3
+
+# Performance and Monitoring
+lighthouse.config.js @chrimar3
+.github/workflows/performance-monitoring.yml @chrimar3

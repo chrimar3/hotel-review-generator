@@ -1,0 +1,234 @@
+name: Performance Monitoring
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run performance tests daily at 3 AM UTC
+    - cron: '0 3 * * *'
+
+jobs:
+  lighthouse-ci:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build
+
+    - name: Start server
+      run: |
+        npm run preview &
+        sleep 10
+
+    - name: Run Lighthouse CI
+      run: |
+        npm install -g @lhci/cli@0.12.x
+        lhci autorun
+      env:
+        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+    - name: Upload Lighthouse results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: lighthouse-results
+        path: .lighthouseci/
+
+  bundle-analysis:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build and analyze bundle
+      run: |
+        npm run build
+        npx vite-bundle-analyzer dist/
+
+    - name: Check bundle size
+      run: |
+        BUNDLE_SIZE=$(du -sk dist/ | cut -f1)
+        echo "Bundle size: ${BUNDLE_SIZE}KB"
+        if [ $BUNDLE_SIZE -gt 1000 ]; then
+          echo "::warning::Bundle size is larger than 1MB"
+        fi
+
+  accessibility-audit:
+    name: Accessibility Audit
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build
+
+    - name: Start server
+      run: |
+        npm run preview &
+        sleep 10
+
+    - name: Run Pa11y accessibility tests
+      run: |
+        npx pa11y http://localhost:4173 \
+          --standard WCAG2AA \
+          --reporter cli \
+          --threshold 0
+
+    - name: Run axe-core tests
+      run: |
+        npx @axe-core/cli http://localhost:4173 \
+          --tags wcag2a,wcag2aa \
+          --exit
+
+  core-web-vitals:
+    name: Core Web Vitals
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: npm run build
+
+    - name: Start server
+      run: |
+        npm run preview &
+        sleep 10
+
+    - name: Measure Core Web Vitals
+      run: |
+        npx web-vitals-measure http://localhost:4173 \
+          --output json > web-vitals.json
+
+    - name: Check Web Vitals thresholds
+      run: |
+        node -e "
+        const vitals = JSON.parse(require('fs').readFileSync('web-vitals.json'));
+        const thresholds = { FCP: 1800, LCP: 2500, FID: 100, CLS: 0.1 };
+        let failed = false;
+        Object.entries(thresholds).forEach(([metric, threshold]) => {
+          if (vitals[metric] && vitals[metric] > threshold) {
+            console.log(\`::error::\${metric} (\${vitals[metric]}) exceeds threshold (\${threshold})\`);
+            failed = true;
+          }
+        });
+        if (failed) process.exit(1);
+        "
+
+    - name: Upload Web Vitals results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: web-vitals-results
+        path: web-vitals.json
+
+  performance-regression:
+    name: Performance Regression Test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+    - name: Checkout base
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.base_ref }}
+        path: base
+
+    - name: Checkout PR
+      uses: actions/checkout@v4
+      with:
+        path: pr
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Test base performance
+      run: |
+        cd base
+        npm ci
+        npm run build
+        npm run preview &
+        sleep 10
+        npx lighthouse http://localhost:4173 --output json > ../base-lighthouse.json
+        pkill -f "npm run preview"
+
+    - name: Test PR performance
+      run: |
+        cd pr
+        npm ci
+        npm run build
+        npm run preview &
+        sleep 10
+        npx lighthouse http://localhost:4173 --output json > ../pr-lighthouse.json
+
+    - name: Compare performance
+      run: |
+        node -e "
+        const base = JSON.parse(require('fs').readFileSync('base-lighthouse.json'));
+        const pr = JSON.parse(require('fs').readFileSync('pr-lighthouse.json'));
+        
+        const metrics = ['first-contentful-paint', 'largest-contentful-paint', 'interactive', 'cumulative-layout-shift'];
+        let hasRegression = false;
+        
+        metrics.forEach(metric => {
+          const baseValue = base.audits[metric].numericValue;
+          const prValue = pr.audits[metric].numericValue;
+          const diff = ((prValue - baseValue) / baseValue) * 100;
+          
+          if (diff > 10) {
+            console.log(\`::warning::\${metric} regression: \${diff.toFixed(2)}% slower\`);
+            hasRegression = true;
+          } else if (diff < -10) {
+            console.log(\`::notice::\${metric} improvement: \${Math.abs(diff).toFixed(2)}% faster\`);
+          }
+        });
+        
+        if (hasRegression) {
+          console.log('::error::Performance regression detected');
+          process.exit(1);
+        }
+        "
