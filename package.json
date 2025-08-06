@@ -59,7 +59,7 @@
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
     "babel-jest": "^29.7.0",
-    "lighthouse": "^11.3.0",
+    "lighthouse": "^12.8.1",
     "pa11y": "^8.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0"
