@@ -20,7 +20,14 @@
     "deploy:netlify": "netlify deploy --prod --dir dist",
     "deploy:vercel": "vercel --prod",
     "clean": "rm -rf dist node_modules/.cache",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:integration": "jest --testPathPattern=tests/integration",
+    "test:e2e": "jest --testPathPattern=tests/e2e",
+    "test:prod": "npm run test && npm run test:integration",
+    "performance:audit": "node scripts/performance-monitor.js audit",
+    "performance:monitor": "node scripts/performance-monitor.js monitor",
+    "load:test": "k6 run tests/load/hotel-system-load-test.js",
+    "health": "curl -f http://localhost:3000/health || exit 1"
   },
   "keywords": [
     "hotel",
@@ -53,6 +60,7 @@
     "@testing-library/jest-dom": "^6.1.0",
     "@vitejs/plugin-legacy": "^7.2.1",
     "babel-jest": "^29.7.0",
+    "chrome-launcher": "^1.2.0",
     "eslint": "^8.55.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.0",
@@ -61,6 +69,7 @@
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "k6": "^0.0.0",
     "lighthouse": "^12.8.1",
     "lint-staged": "^15.2.0",
     "pa11y": "^8.0.0",
