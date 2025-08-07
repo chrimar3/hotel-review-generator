@@ -28,6 +28,16 @@ jobs:
       - name: Lint code
         run: npm run lint
         
+      - name: Generate SARIF report
+        run: npm run lint:sarif
+        continue-on-error: true
+        
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: eslint-results.sarif
+        if: always()
+        
       - name: Run tests with coverage
         run: npm run test:coverage
         

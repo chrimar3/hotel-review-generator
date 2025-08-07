@@ -12,6 +12,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint src/ *.html --ext .js,.html",
+    "lint:sarif": "eslint src/ *.html --ext .js,.html -f @microsoft/eslint-formatter-sarif -o eslint-results.sarif",
     "lint:fix": "eslint src/ *.html --ext .js,.html --fix",
     "format": "prettier --write \"src/**/*.js\" \"*.html\" \"*.md\"",
     "validate": "npm run lint && npm run test && npm run build",
@@ -56,6 +57,7 @@
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
+    "@microsoft/eslint-formatter-sarif": "^3.1.0",
     "@testing-library/dom": "^9.3.0",
     "@testing-library/jest-dom": "^6.1.0",
     "@vitejs/plugin-legacy": "^7.2.1",
