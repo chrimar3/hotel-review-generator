@@ -4,6 +4,8 @@
  * Extracted from main HTML file for better maintainability
  */
 
+import logger from '../utils/logger.js';
+
 export class HapticFeedbackService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
@@ -24,7 +26,7 @@ export class HapticFeedbackService {
         };
 
         this.setupUserPreference();
-        console.log('[HapticFeedback] Service initialized:', { enabled: this.enabled, userPreference: this.userPreference });
+        logger.info('[HapticFeedback] Service initialized', { enabled: this.enabled, userPreference: this.userPreference });
     }
 
     loadUserPreference() {
@@ -215,7 +217,7 @@ export class HapticFeedbackService {
 
     // Test haptic feedback
     test(pattern = 'medium') {
-        console.log(`[HapticFeedback] Testing pattern: ${pattern}`);
+        logger.debug(`[HapticFeedback] Testing pattern: ${pattern}`);
         return this.vibrate(pattern);
     }
 

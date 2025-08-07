@@ -4,7 +4,10 @@
  * Supports data synchronization and automated workflow triggers
  */
 
-export class CRMIntegrationService {
+import logger from '../utils/logger.js';
+import CryptoJS from 'crypto-js';
+
+class CRMIntegrationService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
         this.integrations = new Map();
@@ -81,9 +84,7 @@ export class CRMIntegrationService {
         this.setupWebhookHandlers();
         this.startSyncScheduler();
         
-        if (typeof console !== 'undefined') {
-            console.log('[CRMIntegration] Service initialized with', this.integrations.size, 'integrations');
-        }
+        logger.info(`[CRMIntegration] Service initialized with ${this.integrations.size} integrations`);
     }
 
     // Integration Management
@@ -529,12 +530,21 @@ export class CRMIntegrationService {
 
     // Security and Utilities
     encryptApiKey(apiKey) {
-        // Simple encoding for demo - in production, use proper encryption
-        return btoa(apiKey);
+        // Use proper AES encryption with secure secret key
+        const secretKey = this.getEncryptionKey();
+        return CryptoJS.AES.encrypt(apiKey, secretKey).toString();
     }
 
     decryptApiKey(encryptedKey) {
-        return atob(encryptedKey);
+        const secretKey = this.getEncryptionKey();
+        const bytes = CryptoJS.AES.decrypt(encryptedKey, secretKey);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    }
+
+    getEncryptionKey() {
+        // In production, this should be from environment variables or secure key management
+        // Never hardcode keys in production!
+        return process.env.ENCRYPTION_KEY || 'CHANGE_THIS_IN_PRODUCTION_USE_ENV_VAR';
     }
 
     generateIntegrationId(systemType, systemName) {

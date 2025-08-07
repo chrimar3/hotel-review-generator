@@ -4,6 +4,7 @@
  * Extracted from main HTML file for better maintainability
  */
 
+import logger from '../utils/logger.js';
 import { ErrorMonitorService } from '../services/ErrorMonitorService.js';
 import { ABTestingService } from '../services/ABTestingService.js';
 import { HapticFeedbackService } from '../services/HapticFeedbackService.js';
@@ -77,7 +78,7 @@ export class AppCore {
         this.components = {};
         
         this.initializeServices();
-        console.log('[AppCore] Application core initialized');
+        logger.info('[AppCore] Application core initialized');
     }
 
     initializeServices() {
@@ -121,12 +122,12 @@ export class AppCore {
             });
 
             this.state.isInitialized = true;
-            console.log(`[AppCore] Application initialized in ${initEnd - initStart}ms`);
+            logger.info(`[AppCore] Application initialized in ${initEnd - initStart}ms`);
             
             return true;
         } catch (error) {
             this.services.errorMonitor.trackError('app_initialization_failed', error);
-            console.error('[AppCore] Failed to initialize application:', error);
+            logger.error('[AppCore] Failed to initialize application:', error);
             return false;
         }
     }
@@ -341,7 +342,7 @@ export class AppCore {
         elementIds.forEach(id => {
             this.elements[id] = document.getElementById(id);
             if (!this.elements[id]) {
-                console.warn(`[AppCore] Element not found: ${id}`);
+                logger.warn(`[AppCore] Element not found: ${id}`);
             }
         });
     }
@@ -614,7 +615,7 @@ export class AppCore {
 
             return enhancedReview.content;
         } catch (error) {
-            console.warn('[AppCore] Platform optimization failed, using base review:', error);
+            logger.warn('[AppCore] Platform optimization failed, using base review:', error);
             return baseReview;
         }
     }

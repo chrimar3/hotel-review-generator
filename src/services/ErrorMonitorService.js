@@ -4,6 +4,8 @@
  * Extracted from main HTML file for better maintainability
  */
 
+import logger from '../utils/logger.js';
+
 export class ErrorMonitorService {
     constructor() {
         this.errors = [];
@@ -18,9 +20,7 @@ export class ErrorMonitorService {
         this.setupPerformanceMonitoring();
         this.setupConnectionMonitoring();
         
-        if (typeof console !== 'undefined') {
-            console.log(`[ErrorMonitor] Initialized with session ID: ${this.sessionId}`);
-        }
+        logger.info(`[ErrorMonitor] Initialized with session ID: ${this.sessionId}`);
     }
 
     generateSessionId() {
@@ -129,7 +129,7 @@ export class ErrorMonitorService {
         this.storeError(error);
         this.sendToExternalService(error);
 
-        console.error('[ErrorMonitor]', error);
+        logger.error('[ErrorMonitor] Error logged', error);
     }
 
     logWarning(warningData) {
@@ -144,7 +144,7 @@ export class ErrorMonitorService {
         };
 
         this.logInfo(warning);
-        console.warn('[ErrorMonitor]', warning);
+        logger.warn('[ErrorMonitor] Warning logged', { warning });
     }
 
     logInfo(infoData) {
@@ -202,7 +202,7 @@ export class ErrorMonitorService {
             localStorage.setItem('hotelReview_errors', JSON.stringify(storedErrors));
         } catch (e) {
             if (typeof console !== 'undefined') {
-                console.warn('[ErrorMonitor] Could not store error in localStorage:', e);
+                logger.warn('[ErrorMonitor] Could not store error in localStorage:', e);
             }
         }
     }
@@ -221,7 +221,7 @@ export class ErrorMonitorService {
             localStorage.removeItem('hotelReview_errors');
         } catch (e) {
             if (typeof console !== 'undefined') {
-                console.warn('[ErrorMonitor] Could not clear stored errors:', e);
+                logger.warn('[ErrorMonitor] Could not clear stored errors:', e);
             }
         }
     }
@@ -239,7 +239,7 @@ export class ErrorMonitorService {
             });
         } catch (e) {
             if (typeof console !== 'undefined') {
-                console.warn('[ErrorMonitor] Could not send error to external service:', e);
+                logger.warn('[ErrorMonitor] Could not send error to external service:', e);
             }
         }
     }

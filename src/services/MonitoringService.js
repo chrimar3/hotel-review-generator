@@ -3,6 +3,8 @@
  * Comprehensive monitoring, alerting, and performance tracking
  */
 
+import logger from '../utils/logger.js';
+
 export class MonitoringService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
@@ -13,7 +15,7 @@ export class MonitoringService {
         this.isEnabled = true;
         
         this.initializeMonitoring();
-        console.log('[Monitoring] Advanced monitoring service initialized');
+        logger.info('[Monitoring] Advanced monitoring service initialized');
     }
 
     getDefaultThresholds() {
@@ -77,7 +79,7 @@ export class MonitoringService {
             try {
                 observer.observe({ entryTypes: ['paint', 'largest-contentful-paint', 'first-input', 'layout-shift'] });
             } catch (e) {
-                console.warn('[Monitoring] Some performance observers not supported:', e);
+                logger.warn('[Monitoring] Some performance observers not supported:', e);
             }
 
             // Navigation timing
@@ -151,7 +153,7 @@ export class MonitoringService {
             try {
                 resourceObserver.observe({ entryTypes: ['resource'] });
             } catch (e) {
-                console.warn('[Monitoring] Resource observer not supported:', e);
+                logger.warn('[Monitoring] Resource observer not supported:', e);
             }
         }
     }
@@ -358,7 +360,7 @@ export class MonitoringService {
             this.alerts.shift();
         }
 
-        console.warn('[Monitoring] Alert created:', alert);
+        logger.warn('[Monitoring] Alert created:', alert);
         
         // Send alert to external service
         this.sendAlert(alert);
@@ -376,7 +378,7 @@ export class MonitoringService {
                     body: JSON.stringify({ key, data, timestamp: Date.now() })
                 });
             } catch (error) {
-                console.warn('[Monitoring] Failed to send metrics to external service:', error);
+                logger.warn('[Monitoring] Failed to send metrics to external service:', error);
             }
         }
     }
@@ -390,7 +392,7 @@ export class MonitoringService {
                     body: JSON.stringify(alert)
                 });
             } catch (error) {
-                console.warn('[Monitoring] Failed to send alert:', error);
+                logger.warn('[Monitoring] Failed to send alert:', error);
             }
         }
     }

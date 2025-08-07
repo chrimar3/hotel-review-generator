@@ -3,6 +3,8 @@
  * Comprehensive WCAG 2.1 AA compliance checking and enhancement
  */
 
+import logger from '../utils/logger.js';
+
 export class AccessibilityService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
@@ -18,7 +20,7 @@ export class AccessibilityService {
         };
         
         this.initialize();
-        console.log('[A11y] Accessibility service initialized');
+        logger.info('[A11y] Accessibility service initialized');
     }
 
     initialize() {
@@ -626,14 +628,14 @@ export class AccessibilityService {
         }
         
         // Log report
-        console.group('[A11y] Accessibility Audit Report');
-        console.log('Compliance Level:', report.complianceLevel);
-        console.log('Total Violations:', report.totalViolations);
-        if (report.totalViolations > 0) {
-            console.log('Violations by Type:', report.violationsByType);
-            console.log('Recommendations:', report.recommendations);
-        }
-        console.groupEnd();
+        logger.group('[A11y] Accessibility Audit Report');
+        logger.info('Accessibility audit completed', {
+            complianceLevel: report.complianceLevel,
+            totalViolations: report.totalViolations,
+            violationsByType: report.violationsByType,
+            recommendations: report.recommendations
+        });
+        logger.groupEnd();
         
         this.errorMonitor?.logInfo({
             type: 'accessibility_audit_complete',
@@ -688,11 +690,11 @@ export class AccessibilityService {
 
     enable() {
         this.config.announcements = true;
-        console.log('[A11y] Accessibility enhancements enabled');
+        logger.info('[A11y] Accessibility enhancements enabled');
     }
 
     disable() {
         this.config.announcements = false;
-        console.log('[A11y] Accessibility enhancements disabled');
+        logger.info('[A11y] Accessibility enhancements disabled');
     }
 }

@@ -5,7 +5,7 @@
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-success?style=for-the-badge&logo=pwa)](./manifest.json)
 [![Security](https://img.shields.io/badge/Security-GDPR%20Compliant-red?style=for-the-badge&logo=security)](./SECURITY.md)
 [![Mobile First](https://img.shields.io/badge/Mobile-First%20Design-blue?style=for-the-badge&logo=mobile)](./index.html)
-[![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AA-green?style=for-the-badge&logo=accessibility)](./docs/accessibility.md)
+[![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AA-green?style=for-the-badge&logo=accessibility)](./src/tests/accessibility.test.js)
 
 > **Professional hotel management toolkit** ✅ Legitimate guest feedback collection, text quality enhancement, and business analytics
 
@@ -280,16 +280,16 @@ src/components/
 ## 📚 Documentation
 
 ### Technical Documentation
-- **[API Reference](docs/api/)** - Complete API documentation
-- **[Integration Guide](docs/integration/)** - System integration instructions
-- **[Security Guide](docs/security/)** - Security implementation details
-- **[Deployment Guide](docs/deployment/)** - Production deployment instructions
+- **[API Reference](docs/api/ERROR_MONITORING_API.md)** - Complete API documentation
+- **[Integration Guide](docs/development/SETUP.md)** - System integration instructions
+- **[Security Guide](SECURITY.md)** - Security implementation details
+- **[Deployment Guide](DEPLOYMENT.md)** - Production deployment instructions
 
 ### Business Documentation  
-- **[User Manual](docs/user-manual/)** - Complete user guide
-- **[Best Practices](docs/best-practices/)** - Industry recommendations
-- **[Compliance Guide](docs/compliance/)** - Regulatory compliance information
-- **[ROI Calculator](docs/roi-calculator/)** - Business value assessment
+- **[Development Guide](docs/development/TESTING.md)** - Complete testing guide
+- **[Best Practices](docs/methodology/DEVELOPMENT_STRATEGY.md)** - Development recommendations
+- **[Technical Details](docs/implementation/PHASE_1_TECHNICAL_DETAILS.md)** - Implementation information
+- **[Repository Structure](docs/REPOSITORY_STRUCTURE.md)** - Project structure overview
 
 ---
 

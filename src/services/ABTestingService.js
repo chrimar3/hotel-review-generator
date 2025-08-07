@@ -4,6 +4,8 @@
  * Extracted from main HTML file for better maintainability
  */
 
+import logger from '../utils/logger.js';
+
 export class ABTestingService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
@@ -12,7 +14,7 @@ export class ABTestingService {
         this.conversionEvents = ['review_generated', 'review_copied', 'platform_redirect', 'feature_selected'];
         
         this.initializeDefaultTests();
-        console.log('[ABTesting] Framework initialized with', this.tests.size, 'tests');
+        logger.info(`[ABTesting] Framework initialized with ${this.tests.size} tests`);
     }
 
     loadUserVariants() {
@@ -108,7 +110,7 @@ export class ABTestingService {
             timestamp: new Date().toISOString()
         });
 
-        console.log(`[ABTesting] User assigned to ${testName}: ${variant}`);
+        logger.info(`[ABTesting] User assigned to ${testName}: ${variant}`);
         return variant;
     }
 
@@ -204,7 +206,7 @@ export class ABTestingService {
                 this.applyCharacterCounterVariant(variant);
                 break;
             default:
-                console.warn(`[ABTesting] Unknown test: ${testName}`);
+                logger.warn(`[ABTesting] Unknown test: ${testName}`);
         }
     }
 

@@ -3,6 +3,8 @@
  * Provides comprehensive data export and analytics reporting
  */
 
+import logger from '../utils/logger.js';
+
 export class ExportReportingService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
@@ -14,9 +16,7 @@ export class ExportReportingService {
     }
 
     initialize() {
-        if (typeof console !== 'undefined') {
-            console.log('[ExportReporting] Service initialized');
-        }
+        logger.info('[ExportReporting] Service initialized');
     }
 
     // Data Export Methods

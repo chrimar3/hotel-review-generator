@@ -3,6 +3,7 @@
  * Coordinates all services and initializes the modular application
  */
 
+import logger from './utils/logger.js';
 import { AppCore } from './modules/AppCore.js';
 import { MonitoringService } from './services/MonitoringService.js';
 import { getMonitoringConfig, initializeMonitoringEndpoints } from './config/monitoring.js';
@@ -13,11 +14,13 @@ class Application {
         this.appCore = null;
         this.monitoringService = null;
         this.isInitialized = false;
+        this.intervals = new Set(); // Track intervals for cleanup
+        this.eventListeners = new Map(); // Track event listeners for cleanup
     }
 
     async initialize() {
         try {
-            console.log('[App] Starting application initialization...');
+            logger.info('[App] Starting application initialization...');
             const initStart = performance.now();
 
             // Initialize core application
@@ -45,7 +48,7 @@ class Application {
             }
 
             const initEnd = performance.now();
-            console.log(`[App] Application fully initialized in ${initEnd - initStart}ms`);
+            logger.info(`[App] Application fully initialized in ${initEnd - initStart}ms`);
 
             this.isInitialized = true;
             
@@ -59,7 +62,7 @@ class Application {
 
             return true;
         } catch (error) {
-            console.error('[App] Application initialization failed:', error);
+            logger.error('[App] Application initialization failed:', error);
             
             // Try to report error if error monitor is available
             if (this.appCore?.getServices()?.errorMonitor) {
@@ -112,10 +115,11 @@ class Application {
             this.createMonitoringDashboard();
         }
 
-        // Update dashboard periodically
-        setInterval(() => {
+        // Update dashboard periodically with cleanup tracking
+        const dashboardInterval = setInterval(() => {
             this.updateMonitoringDashboard();
         }, 10000); // Every 10 seconds
+        this.intervals.add(dashboardInterval);
     }
 
     createMonitoringDashboard() {
@@ -245,7 +249,7 @@ class Application {
                                          alertCount < 3 ? '#f59e0b' : '#ef4444';
             }
         } catch (error) {
-            console.warn('[App] Failed to update monitoring dashboard:', error);
+            logger.warn('[App] Failed to update monitoring dashboard:', error);
         }
     }
 
@@ -275,7 +279,7 @@ class Application {
     }
 
     async runAccessibilityTests() {
-        console.log('[App] Running comprehensive accessibility tests...');
+        logger.info('[App] Running comprehensive accessibility tests...');
         
         try {
             const tester = new AccessibilityTester();
@@ -293,14 +297,49 @@ class Application {
             // Store report for debugging
             window.accessibilityReport = report;
             
-            console.log(`[App] Accessibility audit completed. Score: ${report.score}/100 (${report.level})`);
+            logger.info(`[App] Accessibility audit completed. Score: ${report.score}/100 (${report.level})`);
             
             return report;
         } catch (error) {
-            console.error('[App] Accessibility testing failed:', error);
+            logger.error('[App] Accessibility testing failed:', error);
             this.appCore?.getServices()?.errorMonitor?.trackError('accessibility_testing_failed', error);
             return null;
         }
+    }
+
+    // Cleanup method to prevent memory leaks
+    cleanup() {
+        logger.info('Cleaning up application resources...');
+        
+        // Clear all intervals
+        this.intervals.forEach(interval => {
+            clearInterval(interval);
+        });
+        this.intervals.clear();
+        
+        // Remove all event listeners
+        this.eventListeners.forEach((listener, element) => {
+            const [event, handler] = listener;
+            element.removeEventListener(event, handler);
+        });
+        this.eventListeners.clear();
+        
+        // Cleanup services
+        if (this.appCore && typeof this.appCore.cleanup === 'function') {
+            this.appCore.cleanup();
+        }
+        
+        if (this.monitoringService && typeof this.monitoringService.cleanup === 'function') {
+            this.monitoringService.cleanup();
+        }
+        
+        logger.info('Application cleanup completed');
+    }
+
+    // Add method to track event listeners
+    addEventListenerWithCleanup(element, event, handler) {
+        element.addEventListener(event, handler);
+        this.eventListeners.set(element, [event, handler]);
     }
 }
 
@@ -309,18 +348,18 @@ let app = null;
 
 function initializeApplication() {
     if (app) {
-        console.warn('[App] Application already initialized');
+        logger.warn('[App] Application already initialized');
         return app;
     }
 
     app = new Application();
     app.initialize().then(success => {
         if (success) {
-            console.log('[App] ✅ Application ready');
+            logger.info('[App] Application ready');
             // Make app globally available for debugging
             window.hotelReviewApp = app;
         } else {
-            console.error('[App] ❌ Application failed to start');
+            logger.error('[App] Application failed to start');
         }
     });
 

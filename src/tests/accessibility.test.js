@@ -3,6 +3,8 @@
  * WCAG 2.1 AA Compliance Validation
  */
 
+import logger from '../utils/logger.js';
+
 export class AccessibilityTester {
     constructor() {
         this.results = {
@@ -14,7 +16,7 @@ export class AccessibilityTester {
     }
 
     async runAllTests() {
-        console.log('[A11y Test] Starting comprehensive accessibility testing...');
+        logger.info('[A11y Test] Starting comprehensive accessibility testing...');
         
         // Core WCAG 2.1 AA Tests
         this.testKeyboardNavigation();
@@ -38,7 +40,7 @@ export class AccessibilityTester {
     }
 
     testKeyboardNavigation() {
-        console.log('[A11y Test] Testing keyboard navigation...');
+        logger.info('[A11y Test] Testing keyboard navigation...');
         
         // Test 1: All interactive elements are keyboard accessible
         const interactiveElements = document.querySelectorAll(
@@ -93,7 +95,7 @@ export class AccessibilityTester {
     }
 
     testFocusManagement() {
-        console.log('[A11y Test] Testing focus management...');
+        logger.info('[A11y Test] Testing focus management...');
         
         // Test: Focus indicators are visible
         const focusableElements = document.querySelectorAll('button, a, input, textarea, select');
@@ -127,7 +129,7 @@ export class AccessibilityTester {
     }
 
     testSemanticHTML() {
-        console.log('[A11y Test] Testing semantic HTML...');
+        logger.info('[A11y Test] Testing semantic HTML...');
         
         // Test: Proper use of semantic elements
         const hasMain = document.querySelector('main');
@@ -153,7 +155,7 @@ export class AccessibilityTester {
     }
 
     testARIAImplementation() {
-        console.log('[A11y Test] Testing ARIA implementation...');
+        logger.info('[A11y Test] Testing ARIA implementation...');
         
         // Test: ARIA attributes are valid
         const ariaElements = document.querySelectorAll('[aria-label], [aria-labelledby], [aria-describedby], [role]');
@@ -194,7 +196,7 @@ export class AccessibilityTester {
     }
 
     testColorContrast() {
-        console.log('[A11y Test] Testing color contrast...');
+        logger.info('[A11y Test] Testing color contrast...');
         
         // This is a simplified test - full implementation would check all text elements
         const testElements = document.querySelectorAll('p, span, button, a, label, h1, h2, h3');
@@ -234,7 +236,7 @@ export class AccessibilityTester {
     }
 
     testTextAlternatives() {
-        console.log('[A11y Test] Testing text alternatives...');
+        logger.info('[A11y Test] Testing text alternatives...');
         
         // Test: Images have appropriate alt text
         const images = document.querySelectorAll('img');
@@ -262,7 +264,7 @@ export class AccessibilityTester {
     }
 
     testFormAccessibility() {
-        console.log('[A11y Test] Testing form accessibility...');
+        logger.info('[A11y Test] Testing form accessibility...');
         
         // Test: Form controls have labels
         const formControls = document.querySelectorAll('input, textarea, select');
@@ -290,7 +292,7 @@ export class AccessibilityTester {
     }
 
     testHeadingStructure() {
-        console.log('[A11y Test] Testing heading structure...');
+        logger.info('[A11y Test] Testing heading structure...');
         
         const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
         const levels = Array.from(headings).map(h => parseInt(h.tagName.charAt(1)));
@@ -326,7 +328,7 @@ export class AccessibilityTester {
     }
 
     testLandmarks() {
-        console.log('[A11y Test] Testing page landmarks...');
+        logger.info('[A11y Test] Testing page landmarks...');
         
         const main = document.querySelector('main');
         const nav = document.querySelector('nav');
@@ -351,7 +353,7 @@ export class AccessibilityTester {
     }
 
     testLanguage() {
-        console.log('[A11y Test] Testing language specification...');
+        logger.info('[A11y Test] Testing language specification...');
         
         const htmlElement = document.documentElement;
         const langAttribute = htmlElement.getAttribute('lang');
@@ -372,7 +374,7 @@ export class AccessibilityTester {
     }
 
     testMotionPreferences() {
-        console.log('[A11y Test] Testing motion preferences...');
+        logger.info('[A11y Test] Testing motion preferences...');
         
         // Check if reduced motion is respected
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -394,7 +396,7 @@ export class AccessibilityTester {
     }
 
     testScreenReaderCompatibility() {
-        console.log('[A11y Test] Testing screen reader compatibility...');
+        logger.info('[A11y Test] Testing screen reader compatibility...');
         
         // Check for live regions
         const liveRegions = document.querySelectorAll('[aria-live]');
@@ -504,16 +506,16 @@ export class AccessibilityTester {
         };
 
         console.group('[A11y Test] Accessibility Test Report');
-        console.log(`Score: ${report.score}/100 (${report.level})`);
-        console.log('Summary:', report.summary);
+        logger.info(`Score: ${report.score}/100 (${report.level})`);
+        logger.info('Summary:', report.summary);
         if (report.details.failed.length > 0) {
-            console.log('Failed Tests:', report.details.failed);
+            logger.info('Failed Tests:', report.details.failed);
         }
         if (report.details.warnings.length > 0) {
-            console.log('Warnings:', report.details.warnings);
+            logger.info('Warnings:', report.details.warnings);
         }
         if (report.recommendations.length > 0) {
-            console.log('Recommendations:', report.recommendations);
+            logger.info('Recommendations:', report.recommendations);
         }
         console.groupEnd();
 

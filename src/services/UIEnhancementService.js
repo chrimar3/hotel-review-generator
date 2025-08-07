@@ -3,6 +3,8 @@
  * Provides advanced user interface improvements and better user experience
  */
 
+import logger from '../utils/logger.js';
+
 export class UIEnhancementService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
@@ -46,9 +48,7 @@ export class UIEnhancementService {
         this.setupKeyboardShortcuts();
         this.enhanceAccessibility();
         
-        if (typeof console !== 'undefined') {
-            console.log('[UIEnhancement] UI/UX enhancements initialized');
-        }
+        logger.info('[UIEnhancement] UI/UX enhancements initialized');
     }
 
     // Responsive Design

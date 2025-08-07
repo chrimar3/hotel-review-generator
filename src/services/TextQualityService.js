@@ -4,6 +4,8 @@
  * Helps improve the quality of genuine guest feedback and hotel communications
  */
 
+import logger from '../utils/logger.js';
+
 export class TextQualityService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
@@ -11,9 +13,7 @@ export class TextQualityService {
         this.spellChecker = new SpellChecker();
         this.readabilityAnalyzer = new ReadabilityAnalyzer();
         
-        if (typeof console !== 'undefined') {
-            console.log('[TextQuality] Text quality enhancement service initialized');
-        }
+        logger.info('[TextQuality] Text quality enhancement service initialized');
     }
 
     // Main text enhancement method

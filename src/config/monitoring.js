@@ -3,6 +3,8 @@
  * Centralized configuration for production monitoring and alerting
  */
 
+import logger from '../utils/logger.js';
+
 export const monitoringConfig = {
     // External monitoring services
     endpoints: {
@@ -135,7 +137,7 @@ export function initializeMonitoringEndpoints(monitoringService) {
             config.endpoints.metrics,
             config.endpoints.alerts
         );
-        console.log('[Monitoring] External endpoints configured');
+        logger.info('[Monitoring] External endpoints configured');
     }
     
     // Apply custom thresholds

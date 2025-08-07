@@ -4,6 +4,8 @@
  * Replaces artificial review generation with actual guest communication
  */
 
+import logger from '../utils/logger.js';
+
 export class GuestFeedbackService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
@@ -36,9 +38,7 @@ export class GuestFeedbackService {
         this.loadStoredData();
         this.setupEmailTemplates();
         
-        if (typeof console !== 'undefined') {
-            console.log('[GuestFeedback] Guest feedback collection service initialized');
-        }
+        logger.info('[GuestFeedback] Guest feedback collection service initialized');
     }
 
     // Guest Management
@@ -232,10 +232,8 @@ export class GuestFeedbackService {
 
     simulateEmailSend(email, content) {
         // In production, this would use a real email service (SendGrid, Mailgun, etc.)
-        if (typeof console !== 'undefined') {
-            console.log(`[GuestFeedback] Email would be sent to ${email}`);
-            console.log('Content preview:', content.substring(0, 200) + '...');
-        }
+        logger.info(`[GuestFeedback] Email would be sent to ${email}`);
+        logger.debug('Content preview:', { content: content.substring(0, 200) + '...' });
     }
 
     // Feedback Response Handling

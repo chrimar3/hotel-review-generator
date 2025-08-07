@@ -3,7 +3,10 @@
  * Ensures data protection, privacy compliance, and secure operations
  */
 
-export class SecurityComplianceService {
+import logger from '../utils/logger.js';
+import bcrypt from 'bcrypt';
+
+class SecurityComplianceService {
     constructor(errorMonitor) {
         this.errorMonitor = errorMonitor;
         
@@ -39,9 +42,7 @@ export class SecurityComplianceService {
         this.initializeEncryption();
         this.startSecurityMonitoring();
         
-        if (typeof console !== 'undefined') {
-            console.log('[Security] Security and compliance framework initialized');
-        }
+        logger.info('[Security] Security and compliance framework initialized');
     }
 
     // Data Protection
@@ -273,15 +274,24 @@ export class SecurityComplianceService {
         return 'strong';
     }
 
-    hashPassword(password) {
-        // Simple hash for demo - use bcrypt or similar in production
-        let hash = 0;
-        for (let i = 0; i < password.length; i++) {
-            const char = password.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
+    async hashPassword(password) {
+        // Use bcrypt with salt rounds for secure password hashing
+        const saltRounds = 12; // Industry standard for strong security
+        try {
+            return await bcrypt.hash(password, saltRounds);
+        } catch (error) {
+            logger.error('Password hashing failed:', error);
+            throw new Error('Password hashing failed');
         }
-        return hash.toString(36);
+    }
+
+    async verifyPassword(password, hashedPassword) {
+        try {
+            return await bcrypt.compare(password, hashedPassword);
+        } catch (error) {
+            logger.error('Password verification failed:', error);
+            return false;
+        }
     }
 
     // Session Management

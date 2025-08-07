@@ -4,6 +4,8 @@
  * Part of the Advanced Platform Integration feature set
  */
 
+import logger from '../utils/logger.js';
+
 export class MultiPropertyDashboard {
     constructor(appCore) {
         this.appCore = appCore;
@@ -20,9 +22,7 @@ export class MultiPropertyDashboard {
         this.createDashboardUI();
         this.setupEventListeners();
         
-        if (typeof console !== 'undefined') {
-            console.log('[MultiProperty] Dashboard initialized with', this.properties.length, 'properties');
-        }
+        logger.info(`[MultiProperty] Dashboard initialized with ${this.properties.length} properties`);
     }
 
     loadStoredProperties() {
